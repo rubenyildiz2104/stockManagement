@@ -74,7 +74,7 @@ const Reports: React.FC<ReportsProps> = ({ garments }) => {
                                 <Tooltip
                                     cursor={{ fill: '#f8fafc' }}
                                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
-                                    formatter={(value: number) => [`${value.toLocaleString()} €`, 'Valeur']}
+                                    formatter={(value: number | undefined) => [value !== undefined ? `${value.toLocaleString()} €` : '0 €', 'Valeur']}
                                 />
                                 <Bar dataKey="value" fill="#000000" radius={[4, 4, 0, 0]} barSize={40} />
                             </BarChart>
