@@ -8,25 +8,23 @@ interface StockChartProps {
 
 const StockChart: React.FC<StockChartProps> = ({ data }) => {
     const chartData = data.reduce((acc, item) => {
-        const existing = acc.find(d => d.name === item.name);
+        const existing = acc.find(d => d.name === item.category);
         if (existing) {
             existing.current += item.currentStock;
-            existing.min += item.minStock;
         } else {
             acc.push({
-                name: item.name,
+                name: item.category,
                 current: item.currentStock,
-                min: item.minStock,
             });
         }
         return acc;
-    }, [] as { name: string; current: number; min: number }[]);
+    }, [] as { name: string; current: number }[]);
 
     return (
         <div className="card" style={{ height: '400px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Aperçu des niveaux de stock</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Stock actuel vs stock minimum requis par type de vêtement</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Stock actuel par catégorie de vêtement</p>
             </div>
 
             <div style={{ flex: 1, width: '100%' }}>
@@ -57,10 +55,9 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
                             verticalAlign="bottom"
                             align="center"
                             iconType="square"
-                            formatter={(value) => <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 500 }}>{value === 'current' ? 'Stock Actuel' : 'Stock Minimum'}</span>}
+                            formatter={(value) => <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 500 }}>{value === 'current' ? 'Stock Actuel' : 'Stock'}</span>}
                         />
                         <Bar dataKey="current" name="current" fill="#000000" radius={[4, 4, 0, 0]} barSize={40} />
-                        <Bar dataKey="min" name="min" fill="#e2e8f0" radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                 </ResponsiveContainer>
             </div>

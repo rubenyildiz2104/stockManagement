@@ -67,7 +67,7 @@ export const parseExcelStock = (buffer: ArrayBuffer): Garment[] => {
                     color: String(color),
                     price: price,
                     currentStock: stock,
-                    minStock: 5,
+
                     dateAdded: new Date().toISOString().split('T')[0]
                 });
             }

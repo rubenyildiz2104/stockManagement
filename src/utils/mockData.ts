@@ -12,7 +12,7 @@ export const initialGarments: Garment[] = [
         color: 'Standard',
         price: 220,
         currentStock: 1,
-        minStock: 5,
+
         dateAdded: '2024-01-15',
     },
     {
@@ -26,7 +26,7 @@ export const initialGarments: Garment[] = [
         color: 'Gris',
         price: 178,
         currentStock: 1,
-        minStock: 8,
+
         dateAdded: '2024-01-16',
     },
     {
@@ -40,7 +40,7 @@ export const initialGarments: Garment[] = [
         color: 'Bleu',
         price: 236,
         currentStock: 1,
-        minStock: 10,
+
         dateAdded: '2024-01-20',
     }
 ];

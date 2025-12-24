@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import DeleteModal from './components/DeleteModal';
 import type { View, Garment } from './types';
-import { initialGarments } from './utils/mockData';
+import { getAllGarments, addGarment, updateGarment, deleteGarment, importGarments } from './lib/database';
 import './index.css';
 
 import Dashboard from './pages/Dashboard';
@@ -11,9 +11,10 @@ import AddGarment from './pages/AddGarment';
 import Reports from './pages/Reports';
 
 const App: React.FC = () => {
-  const [garments, setGarments] = useState<Garment[]>(initialGarments);
+  const [garments, setGarments] = useState<Garment[]>([]);
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [editingGarment, setEditingGarment] = useState<Garment | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Modal State
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; garment: Garment | null }>({
@@ -21,14 +22,38 @@ const App: React.FC = () => {
     garment: null
   });
 
+  // Charger les données au démarrage
+  useEffect(() => {
+    loadGarments();
+  }, []);
+
+  const loadGarments = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllGarments();
+      setGarments(data);
+    } catch (error) {
+      console.error('Error loading garments:', error);
+      alert('Erreur lors du chargement des données');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleDeleteRequest = (garment: Garment) => {
     setDeleteModal({ isOpen: true, garment });
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (deleteModal.garment) {
-      setGarments(prev => prev.filter(g => g.id !== deleteModal.garment!.id));
-      setDeleteModal({ isOpen: false, garment: null });
+      try {
+        await deleteGarment(deleteModal.garment.id);
+        setGarments(prev => prev.filter(g => g.id !== deleteModal.garment!.id));
+        setDeleteModal({ isOpen: false, garment: null });
+      } catch (error) {
+        console.error('Error deleting garment:', error);
+        alert('Erreur lors de la suppression');
+      }
     }
   };
 
@@ -37,26 +62,48 @@ const App: React.FC = () => {
     setCurrentView('add-garment');
   };
 
-  const handleAdd = (newGarment: Omit<Garment, 'id' | 'dateAdded'>) => {
-    const garment: Garment = {
-      ...newGarment,
-      id: Math.random().toString(36).substr(2, 9),
-      dateAdded: new Date().toISOString().split('T')[0]
-    };
-    setGarments(prev => [garment, ...prev]);
+  const handleAdd = async (newGarment: Omit<Garment, 'id' | 'dateAdded'>) => {
+    try {
+      const added = await addGarment(newGarment);
+      setGarments(prev => [added, ...prev]);
+    } catch (error) {
+      console.error('Error adding garment:', error);
+      alert('Erreur lors de l\'ajout');
+    }
   };
 
-  const handleUpdate = (updatedGarment: Garment) => {
-    setGarments(prev => prev.map(g => g.id === updatedGarment.id ? updatedGarment : g));
-    setEditingGarment(null);
-    setCurrentView('inventory');
+  const handleUpdate = async (updatedGarment: Garment) => {
+    try {
+      const updated = await updateGarment(updatedGarment);
+      setGarments(prev => prev.map(g => g.id === updated.id ? updated : g));
+      setEditingGarment(null);
+      setCurrentView('inventory');
+    } catch (error) {
+      console.error('Error updating garment:', error);
+      alert('Erreur lors de la mise à jour');
+    }
   };
 
-  const handleImport = (importedGarments: Garment[]) => {
-    setGarments(prev => [...importedGarments, ...prev]);
+  const handleImport = async (importedGarments: Garment[]) => {
+    try {
+      const added = await importGarments(importedGarments);
+      setGarments(prev => [...added, ...prev]);
+      alert(`${added.length} articles importés avec succès !`);
+    } catch (error) {
+      console.error('Error importing garments:', error);
+      alert('Erreur lors de l\'importation');
+    }
   };
 
   const renderView = () => {
+    if (loading) {
+      return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+          <p style={{ fontSize: '1.5rem', color: 'var(--text-secondary)' }}>Chargement...</p>
+        </div>
+      );
+    }
+
     switch (currentView) {
       case 'dashboard':
         return <Dashboard garments={garments} onNavigate={setCurrentView} />;
@@ -91,11 +138,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="layout-container">
-      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-      <main className="main-content">
-        {renderView()}
-      </main>
+    <>
+      <div className="layout-container">
+        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
+        <main className="main-content">
+          {renderView()}
+        </main>
+      </div>
 
       <DeleteModal
         isOpen={deleteModal.isOpen}
@@ -103,7 +152,7 @@ const App: React.FC = () => {
         onClose={() => setDeleteModal({ isOpen: false, garment: null })}
         onConfirm={confirmDelete}
       />
-    </div>
+    </>
   );
 };
 

@@ -29,7 +29,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
         color: '',
         price: '',
         currentStock: '0',
-        minStock: '10'
+
     });
 
     useEffect(() => {
@@ -46,7 +46,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                 color: initialData.color,
                 price: String(initialData.price),
                 currentStock: String(initialData.currentStock),
-                minStock: String(initialData.minStock)
+
             });
         }
     }, [initialData]);
@@ -63,7 +63,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
             color: formData.color,
             price: Number(formData.price),
             currentStock: Number(formData.currentStock),
-            minStock: Number(formData.minStock),
+
         };
 
         if (isEditing && initialData) {
@@ -220,16 +220,6 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                             type="number"
                             value={formData.currentStock}
                             onChange={e => setFormData({ ...formData, currentStock: e.target.value })}
-                        />
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Stock Minimum Requis</label>
-                        <input
-                            required
-                            type="number"
-                            value={formData.minStock}
-                            onChange={e => setFormData({ ...formData, minStock: e.target.value })}
                         />
                     </div>
 

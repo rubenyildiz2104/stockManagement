@@ -13,7 +13,6 @@ export interface Garment {
   color: string;
   price: number;
   currentStock: number;
-  minStock: number;
   dateAdded: string;
 }
 
