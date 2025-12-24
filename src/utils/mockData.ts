@@ -1,0 +1,46 @@
+import type { Garment } from '../types';
+
+export const initialGarments: Garment[] = [
+    {
+        id: '1',
+        serialNumber: 'L01L85',
+        name: "Imperméable Lenoci",
+        brand: 'Lenoci',
+        model: '552',
+        category: 'Imperméables',
+        size: '54',
+        color: 'Standard',
+        price: 220,
+        currentStock: 1,
+        minStock: 5,
+        dateAdded: '2024-01-15',
+    },
+    {
+        id: '2',
+        serialNumber: '643264',
+        name: "Veste Textura",
+        brand: 'Textura',
+        model: '61022',
+        category: 'Vestes',
+        size: '52',
+        color: 'Gris',
+        price: 178,
+        currentStock: 1,
+        minStock: 8,
+        dateAdded: '2024-01-16',
+    },
+    {
+        id: '3',
+        serialNumber: '637222',
+        name: "Costume Textura",
+        brand: 'Textura',
+        model: '66618',
+        category: 'Costumes',
+        size: '50',
+        color: 'Bleu',
+        price: 236,
+        currentStock: 1,
+        minStock: 10,
+        dateAdded: '2024-01-20',
+    }
+];
