@@ -78,34 +78,34 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>
-                        {isEditing ? 'Modifier le vêtement' : 'Ajouter un nouveau vêtement'}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'nowrap', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                    <h1 style={{ fontSize: 'clamp(1.25rem, 5vw, 1.75rem)', fontWeight: 800, lineHeight: 1.1 }}>
+                        {isEditing ? 'Modifier' : 'Ajouter un vêtement'}
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)' }}>
-                        {isEditing ? `Modification de l'article ${initialData?.serialNumber}` : 'Remplissez les détails pour ajouter un nouvel article à votre inventaire'}
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '0.25rem' }}>
+                        {isEditing ? `Article ${initialData?.serialNumber}` : 'Nouveau produit dans le stock'}
                     </p>
                 </div>
-                <button className="btn btn-outline" onClick={() => onNavigate('inventory')}>
-                    <ArrowLeft size={20} />
-                    Retour à l'inventaire
+                <button className="btn btn-outline" onClick={() => onNavigate('inventory')} style={{ fontSize: '0.75rem', padding: '0.5rem 0.75rem', height: 'fit-content' }}>
+                    <ArrowLeft size={16} />
+                    Retour
                 </button>
             </div>
 
-            <div className="card" style={{ maxWidth: '800px' }}>
-                <div style={{ paddingBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <div style={{ padding: '0.5rem', background: '#f8fafc', borderRadius: '8px' }}>
-                        <Package size={18} color="var(--text-secondary)" />
+            <div className="card" style={{ padding: '0' }}>
+                <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+                    <div style={{ padding: '0.4rem', background: 'var(--bg-primary)', borderRadius: '6px', display: 'flex' }}>
+                        <Package size={16} color="var(--text-secondary)" />
                     </div>
                     <div>
-                        <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Informations sur le vêtement</h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Entrez tous les détails requis</p>
+                        <h3 style={{ fontSize: '0.9rem', fontWeight: 700 }}>Informations produit</h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Entrez les champs ci-dessous</p>
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
+                <form onSubmit={handleSubmit} style={{ padding: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Marque (Brand)</label>
                         <input

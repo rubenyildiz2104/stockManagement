@@ -16,4 +16,4 @@ export interface Garment {
   dateAdded: string;
 }
 
-export type View = 'dashboard' | 'inventory' | 'add-garment' | 'reports';
+export type View = 'dashboard' | 'inventory' | 'add-garment' | 'reports' | 'settings';

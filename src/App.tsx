@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import AddGarment from './pages/AddGarment';
 import Reports from './pages/Reports';
+import Settings from './pages/Settings';
 import Login from './pages/Login';
 import MobileNav from './components/MobileNav';
 import MobileHeader from './components/MobileHeader';
@@ -189,6 +190,8 @@ const App: React.FC = () => {
         );
       case 'reports':
         return <Reports garments={garments} onNavigate={setCurrentView} />;
+      case 'settings':
+        return <Settings theme={theme} onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />;
       default:
         return <Dashboard garments={garments} onNavigate={setCurrentView} />;
     }

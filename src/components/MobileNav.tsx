@@ -21,7 +21,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ currentView, onViewChange }) => {
                 <button
                     key={item.id}
                     className={`mobile-nav-item ${currentView === item.id ? 'active' : ''}`}
-                    onClick={() => onViewChange((item.id as string) === 'settings' ? 'inventory' : item.id)} // Settings redirect for now
+                    onClick={() => onViewChange(item.id)}
                 >
                     <item.icon size={20} />
                     <span>{item.label}</span>
