@@ -40,19 +40,35 @@ const garmentToDb = (garment: Omit<Garment, 'id' | 'dateAdded'> & { id?: string;
     return dbData;
 };
 
-// Récupérer tous les vêtements
+// Récupérer tous les vêtements (gère la limite de 1000 lignes de Supabase)
 export const getAllGarments = async (): Promise<Garment[]> => {
-    const { data, error } = await supabase
-        .from('garments')
-        .select('*')
-        .order('date_added', { ascending: false });
+    let allData: any[] = [];
+    let from = 0;
+    const pageSize = 1000;
+    let hasMore = true;
 
-    if (error) {
-        console.error('Error fetching garments:', error);
-        throw error;
+    while (hasMore) {
+        const { data, error } = await supabase
+            .from('garments')
+            .select('*')
+            .range(from, from + pageSize - 1)
+            .order('date_added', { ascending: false });
+
+        if (error) {
+            console.error('Error fetching garments:', error);
+            throw error;
+        }
+
+        if (data && data.length > 0) {
+            allData = [...allData, ...data];
+            from += pageSize;
+            hasMore = data.length === pageSize;
+        } else {
+            hasMore = false;
+        }
     }
 
-    return data.map(dbToGarment);
+    return allData.map(dbToGarment);
 };
 
 // Ajouter un vêtement
