@@ -17,19 +17,28 @@ const dbToGarment = (dbRow: any): Garment => ({
 });
 
 // Convertir les données de l'application vers le format de la base
-const garmentToDb = (garment: Omit<Garment, 'id' | 'dateAdded'> & { id?: string; dateAdded?: string }) => ({
-    id: garment.id,
-    name: garment.name,
-    serial_number: garment.serialNumber,
-    brand: garment.brand,
-    model: garment.model,
-    category: garment.category,
-    size: garment.size,
-    color: garment.color,
-    price: garment.price,
-    current_stock: garment.currentStock,
-    date_added: garment.dateAdded,
-});
+const garmentToDb = (garment: Omit<Garment, 'id' | 'dateAdded'> & { id?: string; dateAdded?: string }, isUpdate = false) => {
+    const dbData: any = {
+        name: garment.name,
+        serial_number: garment.serialNumber,
+        brand: garment.brand,
+        model: garment.model,
+        category: garment.category,
+        size: garment.size,
+        color: garment.color,
+        price: garment.price,
+        current_stock: garment.currentStock,
+        date_added: garment.dateAdded,
+    };
+
+    // N'inclure l'ID que pour les mises à jour (update)
+    // Pour les insertions (insert/upsert), on laisse Supabase générer un UUID valide
+    if (isUpdate && garment.id) {
+        dbData.id = garment.id;
+    }
+
+    return dbData;
+};
 
 // Récupérer tous les vêtements
 export const getAllGarments = async (): Promise<Garment[]> => {
@@ -50,7 +59,7 @@ export const getAllGarments = async (): Promise<Garment[]> => {
 export const addGarment = async (garment: Omit<Garment, 'id' | 'dateAdded'>): Promise<Garment> => {
     const { data, error } = await supabase
         .from('garments')
-        .insert([garmentToDb(garment)])
+        .insert([garmentToDb(garment, false)])
         .select()
         .single();
 
@@ -66,7 +75,7 @@ export const addGarment = async (garment: Omit<Garment, 'id' | 'dateAdded'>): Pr
 export const updateGarment = async (garment: Garment): Promise<Garment> => {
     const { data, error } = await supabase
         .from('garments')
-        .update(garmentToDb(garment))
+        .update(garmentToDb(garment, true))
         .eq('id', garment.id)
         .select()
         .single();
@@ -96,7 +105,7 @@ export const deleteGarment = async (id: string): Promise<void> => {
 export const importGarments = async (garments: Garment[]): Promise<Garment[]> => {
     const { data, error } = await supabase
         .from('garments')
-        .insert(garments.map(garmentToDb))
+        .insert(garments.map(g => garmentToDb(g, false)))
         .select();
 
     if (error) {
