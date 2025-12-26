@@ -17,10 +17,17 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState<Category | 'Toutes'>('Toutes');
     const [size, setSize] = useState<Size | 'Toutes'>('Toutes');
+    const [brand, setBrand] = useState<string | 'Toutes'>('Toutes');
+    const [color, setColor] = useState<string | 'Toutes'>('Toutes');
+    const [model, setModel] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const availableCategories = useMemo(() => {
-        return Array.from(new Set(garments.map(g => g.category)));
+    const { availableCategories, availableBrands, availableColors } = useMemo(() => {
+        return {
+            availableCategories: Array.from(new Set(garments.map(g => g.category))).sort(),
+            availableBrands: Array.from(new Set(garments.map(g => g.brand))).sort(),
+            availableColors: Array.from(new Set(garments.map(g => g.color))).sort(),
+        };
     }, [garments]);
 
     const filteredGarments = useMemo(() => {
@@ -32,11 +39,16 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                 g.brand.toLowerCase().includes(searchStr) ||
                 g.model.toLowerCase().includes(searchStr) ||
                 g.color.toLowerCase().includes(searchStr);
+
             const matchesCategory = category === 'Toutes' || g.category === category;
             const matchesSize = size === 'Toutes' || g.size === size;
-            return matchesSearch && matchesCategory && matchesSize;
+            const matchesBrand = brand === 'Toutes' || g.brand === brand;
+            const matchesColor = color === 'Toutes' || g.color === color;
+            const matchesModel = model === '' || g.model.toLowerCase().includes(model.toLowerCase());
+
+            return matchesSearch && matchesCategory && matchesSize && matchesBrand && matchesColor && matchesModel;
         });
-    }, [garments, search, category, size]);
+    }, [garments, search, category, size, brand, color, model]);
 
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -88,9 +100,17 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                 onSearchChange={setSearch}
                 category={category}
                 onCategoryChange={setCategory}
+                brand={brand}
+                onBrandChange={setBrand}
+                color={color}
+                onColorChange={setColor}
+                model={model}
+                onModelChange={setModel}
                 size={size}
                 onSizeChange={setSize}
                 availableCategories={availableCategories}
+                availableBrands={availableBrands}
+                availableColors={availableColors}
             />
 
             <GarmentTable
