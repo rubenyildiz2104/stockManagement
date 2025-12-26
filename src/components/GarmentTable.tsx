@@ -12,7 +12,7 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete 
     return (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ padding: '0.5rem', background: '#f8fafc', borderRadius: '8px' }}>
+                <div style={{ padding: '0.5rem', background: 'var(--bg-primary)', borderRadius: '8px' }}>
                     <Package size={18} color="var(--text-secondary)" />
                 </div>
                 <div>
@@ -24,7 +24,7 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete 
             <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-color)', background: '#f8fafc' }}>
+                        <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Marque</th>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Modèle</th>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Couleur</th>
@@ -44,7 +44,7 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete 
                                 <td style={{ padding: '1rem 1.5rem' }}>
                                     <span style={{
                                         padding: '0.25rem 0.5rem',
-                                        background: '#f1f5f9',
+                                        background: 'var(--bg-tertiary)',
                                         borderRadius: '4px',
                                         fontSize: '0.75rem',
                                         fontWeight: 700

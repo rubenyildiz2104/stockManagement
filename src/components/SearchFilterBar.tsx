@@ -26,7 +26,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
     return (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <div style={{ padding: '0.5rem', background: '#f8fafc', borderRadius: '8px' }}>
+                <div style={{ padding: '0.5rem', background: 'var(--bg-primary)', borderRadius: '8px' }}>
                     <Search size={18} color="var(--text-secondary)" />
                 </div>
                 <div>
