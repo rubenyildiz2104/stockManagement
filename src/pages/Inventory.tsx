@@ -56,13 +56,15 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
-                    <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>Gestion d'Inventaire</h1>
-                    <p style={{ color: 'var(--text-secondary)' }}>Affichage de {filteredGarments.length} sur {garments.length} vêtements</p>
+                    <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: 800 }}>Inventaire</h1>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                        {filteredGarments.length} article(s) trouvé(s)
+                    </p>
                 </div>
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', width: '100%', maxWidth: 'max-content' }}>
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -70,13 +72,13 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                         accept=".xlsx, .xls"
                         style={{ display: 'none' }}
                     />
-                    <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()}>
-                        <FileSpreadsheet size={20} />
-                        Importer Excel
+                    <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} style={{ flex: 1 }}>
+                        <FileSpreadsheet size={18} />
+                        Importer
                     </button>
-                    <button className="btn btn-primary" onClick={() => onNavigate('add-garment')}>
-                        <Plus size={20} />
-                        Ajouter un vêtement
+                    <button className="btn btn-primary" onClick={() => onNavigate('add-garment')} style={{ flex: 1.2 }}>
+                        <Plus size={18} />
+                        Ajouter
                     </button>
                 </div>
             </div>

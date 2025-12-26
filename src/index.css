@@ -63,6 +63,9 @@ body {
   color: var(--text-primary);
   transition: background-color var(--transition-speed), color var(--transition-speed);
   font-size: 14px;
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
+  width: 100%;
 }
 
 @media (min-width: 768px) {

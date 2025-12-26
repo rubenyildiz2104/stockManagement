@@ -105,7 +105,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+                <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.25rem' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Marque (Brand)</label>
                         <input
@@ -146,12 +146,12 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                         />
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', gridColumn: 'span 2' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', gridColumn: '1 / -1' }}>
                         <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Catégorie</label>
-                        <div style={{ display: 'flex', gap: '1rem' }}>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                             {!formData.useCustomCategory ? (
                                 <select
-                                    style={{ flex: 1 }}
+                                    style={{ flex: 1, minWidth: '200px' }}
                                     value={formData.category}
                                     onChange={e => setFormData({ ...formData, category: e.target.value })}
                                 >
@@ -161,7 +161,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                             ) : (
                                 <input
                                     autoFocus
-                                    style={{ flex: 1 }}
+                                    style={{ flex: 1, minWidth: '200px' }}
                                     placeholder="Entrez une nouvelle catégorie"
                                     value={formData.customCategory}
                                     onChange={e => setFormData({ ...formData, customCategory: e.target.value })}
@@ -171,15 +171,6 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                                 <button type="button" className="btn btn-outline" onClick={() => setFormData({ ...formData, useCustomCategory: false })}>Annuler</button>
                             )}
                         </div>
-                        {formData.category === '__NEW__' && !formData.useCustomCategory && (
-                            <button
-                                type="button"
-                                style={{ fontSize: '0.75rem', alignSelf: 'flex-start', color: '#3b82f6', border: 'none', background: 'transparent', cursor: 'pointer' }}
-                                onClick={() => setFormData({ ...formData, useCustomCategory: true, category: availableCategories[0] || 'Costumes' })}
-                            >
-                                Cliquez pour ajouter une nouvelle catégorie
-                            </button>
-                        )}
                     </div>
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -223,12 +214,12 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                         />
                     </div>
 
-                    <div style={{ gridColumn: 'span 2', display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                        <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', cursor: 'pointer' }}>
+                    <div style={{ gridColumn: '1 / -1', display: 'flex', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
+                        <button type="submit" className="btn btn-primary" style={{ flex: 1, minWidth: '150px' }}>
                             <Save size={18} />
-                            {isEditing ? 'Enregistrer les modifications' : "Ajouter à l'inventaire"}
+                            {isEditing ? 'Sauvegarder' : "Ajouter"}
                         </button>
-                        <button type="button" className="btn btn-outline" onClick={() => onNavigate('inventory')} style={{ flex: 0.4, justifyContent: 'center' }}>
+                        <button type="button" className="btn btn-outline" onClick={() => onNavigate('inventory')} style={{ flex: 1, minWidth: '150px' }}>
                             Annuler
                         </button>
                     </div>

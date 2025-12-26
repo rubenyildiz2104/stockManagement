@@ -40,93 +40,111 @@ const Reports: React.FC<ReportsProps> = ({ garments }) => {
     }, [] as { name: string; value: number }[]).sort((a, b) => b.value - a.value).slice(0, 8);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div>
-                <h1 style={{ fontSize: '2rem', fontWeight: 800 }}>Rapports & Analyses</h1>
-                <p style={{ color: 'var(--text-secondary)' }}>Aperçu détaillé de la valeur de votre stock</p>
+                <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: 800 }}>Analyses</h1>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Aperçu de la performance du stock</p>
             </div>
 
-            <div style={{ display: 'flex', gap: '1.5rem' }}>
-                <StatCard title="Unités Totales" value={totalUnits} subValue="Pièces en stock" Icon={Package} />
-                <StatCard title="Valeur Totale" value={`${totalValue.toLocaleString()} €`} subValue="Valeur marchande" Icon={DollarSign} />
-                <StatCard title="Prix Moyen" value={`${avgPrice} €`} subValue="Par unité" Icon={TrendingUp} />
-                <StatCard title="Catégories" value={categoriesCount} subValue="Types de vêtements" Icon={Tag} />
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+                gap: '1rem'
+            }}>
+                <StatCard title="Unités" value={totalUnits} subValue="En stock" Icon={Package} />
+                <StatCard title="Valeur" value={`${totalValue.toLocaleString()} €`} subValue="Marchande" Icon={DollarSign} />
+                <StatCard title="Moyen" value={`${avgPrice} €`} subValue="Prix/unité" Icon={TrendingUp} />
+                <StatCard title="Types" value={categoriesCount} subValue="Catégories" Icon={Tag} />
             </div>
 
-            <StockChart data={garments} />
+            <div className="card" style={{ padding: '1rem', overflowX: 'hidden' }}>
+                <StockChart data={garments} />
+            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', gap: '1.5rem' }}>
                 {/* Value by Brand */}
-                <div className="card" style={{ height: '350px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="card" style={{ height: '350px', display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.25rem' }}>
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                         <BarChart3 size={18} color="var(--text-secondary)" />
                         <div>
                             <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Valeur par Marque</h3>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Top marques par capital immobilisé</p>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Top marques actives</p>
                         </div>
                     </div>
-                    <div style={{ flex: 1, width: '100%' }}>
+                    <div style={{ flex: 1, width: '100%', overflow: 'hidden' }}>
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={brandData} margin={{ top: 10, right: 10, left: 10, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} />
+                            <BarChart data={brandData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--text-secondary)' }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--text-secondary)' }} />
                                 <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
-                                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                                    cursor={{ fill: 'var(--bg-primary)', opacity: 0.1 }}
+                                    contentStyle={{
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--border-color)',
+                                        background: 'var(--card-bg)',
+                                        color: 'var(--text-primary)',
+                                        fontSize: '12px'
+                                    }}
                                     formatter={(value: number | undefined) => [value !== undefined ? `${value.toLocaleString()} €` : '0 €', 'Valeur']}
                                 />
-                                <Bar dataKey="value" fill="#000000" radius={[4, 4, 0, 0]} barSize={40} />
+                                <Bar dataKey="value" fill="var(--accent-black)" radius={[4, 4, 0, 0]} barSize={30} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
                 {/* Units by Category */}
-                <div className="card" style={{ height: '350px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="card" style={{ height: '350px', display: 'flex', flexDirection: 'column', gap: '1rem', padding: '1.25rem' }}>
                     <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                         <PieChart size={18} color="var(--text-secondary)" />
                         <div>
-                            <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Unités par Catégorie</h3>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Répartition du volume de stock</p>
+                            <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Stock par Catégorie</h3>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Volume par type</p>
                         </div>
                     </div>
-                    <div style={{ flex: 1, width: '100%' }}>
+                    <div style={{ flex: 1, width: '100%', overflow: 'hidden' }}>
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} dy={10} />
-                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b' }} />
+                            <BarChart data={categoryData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
+                                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--text-secondary)' }} dy={10} />
+                                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: 'var(--text-secondary)' }} />
                                 <Tooltip
-                                    cursor={{ fill: '#f8fafc' }}
-                                    contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0' }}
+                                    cursor={{ fill: 'var(--bg-primary)', opacity: 0.1 }}
+                                    contentStyle={{
+                                        borderRadius: '12px',
+                                        border: '1px solid var(--border-color)',
+                                        background: 'var(--card-bg)',
+                                        color: 'var(--text-primary)',
+                                        fontSize: '12px'
+                                    }}
                                 />
-                                <Bar dataKey="count" fill="#64748b" radius={[4, 4, 0, 0]} barSize={32} />
+                                <Bar dataKey="count" fill="var(--text-secondary)" radius={[4, 4, 0, 0]} barSize={25} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
             </div>
 
-            <div className="card">
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className="card" style={{ padding: 'clamp(1rem, 4vw, 1.5rem)' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginBottom: '1.25rem' }}>
                     <DollarSign size={18} color="var(--text-secondary)" />
                     <div>
                         <h3 style={{ fontSize: '1rem', fontWeight: 700 }}>Récapitulatif Financier</h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Valeur totale par catégorie</p>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '0.825rem' }}>Valeur par catégorie</p>
                     </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     {categoryData.sort((a, b) => b.value - a.value).map(cat => (
                         <div key={cat.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 0', borderBottom: '1px solid var(--border-color)' }}>
-                            <div>
-                                <span style={{ fontWeight: 600, display: 'block' }}>{cat.name}</span>
-                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{cat.count} unités</span>
+                            <div style={{ flex: 1 }}>
+                                <span style={{ fontWeight: 600, display: 'block', fontSize: '0.9rem' }}>{cat.name}</span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{cat.count} unités</span>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <span style={{ fontWeight: 700 }}>{cat.value.toLocaleString()} €</span>
-                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block' }}>
-                                    {((cat.value / totalValue) * 100).toFixed(1)}% du stock
+                                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{cat.value.toLocaleString()} €</span>
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block' }}>
+                                    {totalValue > 0 ? ((cat.value / totalValue) * 100).toFixed(1) : 0}% du total
                                 </span>
                             </div>
                         </div>
