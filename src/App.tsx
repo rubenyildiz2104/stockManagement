@@ -16,6 +16,25 @@ const App: React.FC = () => {
   const [editingGarment, setEditingGarment] = useState<Garment | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Theme & Sidebar State
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
+  });
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    return localStorage.getItem('sidebarCollapsed') === 'true';
+  });
+
+  // Apply theme to document
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Persist sidebar state
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', String(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
+
   // Modal State
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; garment: Garment | null }>({
     isOpen: false,
@@ -140,8 +159,15 @@ const App: React.FC = () => {
   return (
     <>
       <div className="layout-container">
-        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
-        <main className="main-content">
+        <Sidebar
+          currentView={currentView}
+          onViewChange={setCurrentView}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          theme={theme}
+          onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        />
+        <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
           {renderView()}
         </main>
       </div>

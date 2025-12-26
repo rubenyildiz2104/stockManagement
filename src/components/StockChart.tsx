@@ -34,7 +34,7 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
                         margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
                         barGap={0}
                     >
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-color)" />
                         <XAxis
                             dataKey="name"
                             axisLine={false}
@@ -48,8 +48,14 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
                             tick={{ fill: 'var(--text-secondary)', fontSize: 12 }}
                         />
                         <Tooltip
-                            cursor={{ fill: '#f8fafc' }}
-                            contentStyle={{ borderRadius: '8px', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-md)' }}
+                            cursor={{ fill: 'var(--bg-primary)' }}
+                            contentStyle={{
+                                borderRadius: '8px',
+                                border: '1px solid var(--border-color)',
+                                boxShadow: 'var(--shadow-md)',
+                                background: 'var(--card-bg)',
+                                color: 'var(--text-primary)'
+                            }}
                         />
                         <Legend
                             verticalAlign="bottom"
@@ -57,7 +63,7 @@ const StockChart: React.FC<StockChartProps> = ({ data }) => {
                             iconType="square"
                             formatter={(value) => <span style={{ color: 'var(--text-primary)', fontSize: '13px', fontWeight: 500 }}>{value === 'current' ? 'Stock Actuel' : 'Stock'}</span>}
                         />
-                        <Bar dataKey="current" name="current" fill="#000000" radius={[4, 4, 0, 0]} barSize={40} />
+                        <Bar dataKey="current" name="current" fill="var(--accent-black)" radius={[4, 4, 0, 0]} barSize={40} />
                     </BarChart>
                 </ResponsiveContainer>
             </div>

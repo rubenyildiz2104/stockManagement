@@ -3,28 +3,45 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(0, 0, 0, 0.87);
-  background-color: #f8fafc;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --primary-white: #ffffff;
-  --secondary-bg: #f8fafc;
-  --border-color: #e2e8f0;
+  /* Theme Tokens - Light (Default) */
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
   --text-primary: #0f172a;
   --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
   --accent-black: #1e293b;
   --accent-red: #ef4444;
   --accent-red-hover: #dc2626;
   --accent-red-light: #fee2e2;
+
+  /* Utilities */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --radius-md: 0.75rem;
   --sidebar-width: 240px;
+  --sidebar-collapsed-width: 80px;
+  --transition-speed: 0.3s;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --sidebar-bg: #1e293b;
+  --card-bg: #1e293b;
+  --accent-black: #f8fafc;
+  --accent-red: #ef4444;
+  --accent-red-hover: #dc2626;
+  --accent-red-light: rgba(239, 68, 68, 0.1);
 }
 
 * {
@@ -37,6 +54,9 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 h1,
@@ -72,7 +92,7 @@ textarea {
 .sidebar {
   width: var(--sidebar-width);
   height: 100vh;
-  background: var(--primary-white);
+  background: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   padding: 2rem 1rem;
   position: fixed;
@@ -80,6 +100,12 @@ textarea {
   top: 0;
   display: flex;
   flex-direction: column;
+  transition: width var(--transition-speed), background-color var(--transition-speed), border-color var(--transition-speed);
+  z-index: 100;
+}
+
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
 }
 
 .sidebar-header {
@@ -137,12 +163,12 @@ textarea {
 }
 
 .nav-item:hover {
-  background: var(--secondary-bg);
+  background: var(--bg-primary);
   color: var(--text-primary);
 }
 
 .nav-item.active {
-  background: var(--secondary-bg);
+  background: var(--bg-primary);
   color: var(--text-primary);
   font-weight: 600;
 }
@@ -157,14 +183,20 @@ textarea {
   margin-left: var(--sidebar-width);
   padding: 2.5rem 3rem;
   max-width: 1400px;
+  transition: margin-left var(--transition-speed);
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: var(--sidebar-collapsed-width);
 }
 
 .card {
-  background: var(--primary-white);
+  background: var(--card-bg);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 .btn {
@@ -183,17 +215,17 @@ textarea {
 }
 
 .btn-primary:hover {
-  background: #334155;
+  filter: brightness(1.2);
 }
 
 .btn-outline {
-  background: white;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
 }
 
 .btn-outline:hover {
-  background: var(--secondary-bg);
+  background: var(--bg-primary);
 }
 
 .badge {
@@ -213,17 +245,6 @@ textarea {
   color: var(--accent-red);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    background-color: #0f172a;
-    color: #e2e8f0;
-    --primary-white: #1e293b;
-    --secondary-bg: #0f172a;
-    --border-color: #334155;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-  }
-}
 
 /* MODAL SYSTEM - RE-ADDED FOR RELIABILITY */
 .modal-overlay {
@@ -243,7 +264,7 @@ textarea {
 
 .modal-content {
   position: relative !important;
-  background: var(--primary-white) !important;
+  background: var(--card-bg) !important;
   padding: 3.5rem !important;
   border-radius: 2rem !important;
   width: 90% !important;
@@ -252,6 +273,7 @@ textarea {
   animation: modalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid var(--border-color) !important;
   margin: auto !important;
+  transition: background-color var(--transition-speed), border-color var(--transition-speed);
 }
 
 @keyframes fadeIn {

@@ -224,7 +224,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                     </div>
 
                     <div style={{ gridColumn: 'span 2', display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-                        <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', background: '#000', cursor: 'pointer' }}>
+                        <button type="submit" className="btn btn-primary" style={{ flex: 1, justifyContent: 'center', cursor: 'pointer' }}>
                             <Save size={18} />
                             {isEditing ? 'Enregistrer les modifications' : "Ajouter à l'inventaire"}
                         </button>
