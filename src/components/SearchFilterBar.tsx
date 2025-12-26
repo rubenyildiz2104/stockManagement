@@ -35,8 +35,8 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                 </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-                <div style={{ position: 'relative', flex: 1 }}>
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                <div style={{ position: 'relative', flex: '1 1 100%' }}>
                     <Search
                         size={16}
                         color="var(--text-secondary)"
@@ -44,7 +44,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                     />
                     <input
                         type="text"
-                        placeholder="Rechercher par Marque, Modèle, Série..."
+                        placeholder="Rechercher..."
                         value={search}
                         onChange={(e) => onSearchChange(e.target.value)}
                         style={{ width: '100%', paddingLeft: '2.25rem' }}
@@ -54,18 +54,18 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                 <select
                     value={category}
                     onChange={(e) => onCategoryChange(e.target.value as Category | 'Toutes')}
-                    style={{ width: '220px' }}
+                    style={{ flex: '1 1 calc(50% - 0.5rem)', minWidth: '140px' }}
                 >
-                    {categoriesList.map(c => <option key={c} value={c}>{c === 'Toutes' ? 'Toutes les catégories' : c}</option>)}
+                    {categoriesList.map(c => <option key={c} value={c}>{c === 'Toutes' ? 'Toutes catégories' : c}</option>)}
                 </select>
 
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', flex: '1 1 calc(50% - 0.5rem)', minWidth: '100px' }}>
                     <input
                         type="text"
                         placeholder="Taille (ex: 52)"
                         value={size === 'Toutes' ? '' : size}
                         onChange={(e) => onSizeChange(e.target.value || 'Toutes')}
-                        style={{ width: '160px' }}
+                        style={{ width: '100%' }}
                     />
                     {size !== 'Toutes' && (
                         <button

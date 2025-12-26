@@ -10,6 +10,8 @@ import Inventory from './pages/Inventory';
 import AddGarment from './pages/AddGarment';
 import Reports from './pages/Reports';
 import Login from './pages/Login';
+import MobileNav from './components/MobileNav';
+import MobileHeader from './components/MobileHeader';
 import { supabase } from './lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
@@ -195,6 +197,8 @@ const App: React.FC = () => {
   return (
     <>
       <div className="layout-container">
+        <MobileHeader theme={theme} onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+
         <Sidebar
           currentView={currentView}
           onViewChange={setCurrentView}
@@ -203,9 +207,12 @@ const App: React.FC = () => {
           theme={theme}
           onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         />
+
         <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
           {renderView()}
         </main>
+
+        <MobileNav currentView={currentView} onViewChange={setCurrentView} />
       </div>
 
       <DeleteModal
