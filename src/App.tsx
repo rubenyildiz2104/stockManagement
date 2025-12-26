@@ -9,12 +9,16 @@ import Dashboard from './pages/Dashboard';
 import Inventory from './pages/Inventory';
 import AddGarment from './pages/AddGarment';
 import Reports from './pages/Reports';
+import Login from './pages/Login';
+import { supabase } from './lib/supabase';
+import type { Session } from '@supabase/supabase-js';
 
 const App: React.FC = () => {
   const [garments, setGarments] = useState<Garment[]>([]);
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [editingGarment, setEditingGarment] = useState<Garment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<Session | null>(null);
 
   // Theme & Sidebar State
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -35,16 +39,36 @@ const App: React.FC = () => {
     localStorage.setItem('sidebarCollapsed', String(isSidebarCollapsed));
   }, [isSidebarCollapsed]);
 
+  // Authentication & Initial Load
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) {
+        loadGarments();
+      } else {
+        setLoading(false);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) {
+        loadGarments();
+      } else {
+        setGarments([]);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   // Modal State
   const [deleteModal, setDeleteModal] = useState<{ isOpen: boolean; garment: Garment | null }>({
     isOpen: false,
     garment: null
   });
-
-  // Charger les données au démarrage
-  useEffect(() => {
-    loadGarments();
-  }, []);
 
   const loadGarments = async () => {
     try {
@@ -114,11 +138,23 @@ const App: React.FC = () => {
     }
   };
 
+  if (loading && !session) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
+        <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>Vériﬁcation de l'accès...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Login />;
+  }
+
   const renderView = () => {
     if (loading) {
       return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-          <p style={{ fontSize: '1.5rem', color: 'var(--text-secondary)' }}>Chargement...</p>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100vh - 5rem)' }}>
+          <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>Chargement des données...</p>
         </div>
       );
     }

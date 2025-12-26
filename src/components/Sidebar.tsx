@@ -1,5 +1,6 @@
 import React from 'react';
-import { LayoutDashboard, Package, BarChart3, Settings, Menu, Sun, Moon } from 'lucide-react';
+import { LayoutDashboard, Package, BarChart3, Settings, Menu, Sun, Moon, LogOut } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import type { View } from '../types';
 
 interface SidebarProps {
@@ -79,10 +80,19 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <button
                     className="nav-item"
                     title={isCollapsed ? 'Paramètres' : ''}
-                    style={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}
+                    style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', marginBottom: '0.5rem' }}
                 >
                     <Settings size={20} />
                     {!isCollapsed && <span>Paramètres</span>}
+                </button>
+                <button
+                    className="nav-item"
+                    onClick={() => supabase.auth.signOut()}
+                    title={isCollapsed ? 'Déconnexion' : ''}
+                    style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', color: 'var(--accent-red)' }}
+                >
+                    <LogOut size={20} />
+                    {!isCollapsed && <span>Déconnexion</span>}
                 </button>
             </div>
         </aside>
