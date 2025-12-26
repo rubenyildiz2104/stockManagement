@@ -22,7 +22,7 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
     const [model, setModel] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const { availableCategories, availableBrands, availableColors } = useMemo(() => {
+    const { availableCategories, availableBrands } = useMemo(() => {
         return {
             availableCategories: Array.from(new Set(garments.map(g => g.category))).sort(),
             availableBrands: Array.from(new Set(garments.map(g => g.brand))).sort(),
@@ -110,7 +110,6 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                 onSizeChange={setSize}
                 availableCategories={availableCategories}
                 availableBrands={availableBrands}
-                availableColors={availableColors}
             />
 
             <GarmentTable

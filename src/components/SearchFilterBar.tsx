@@ -9,15 +9,14 @@ interface SearchFilterBarProps {
     onCategoryChange: (val: Category | 'Toutes') => void;
     brand: string | 'Toutes';
     onBrandChange: (val: string | 'Toutes') => void;
-    color: string | 'Toutes';
-    onColorChange: (val: string | 'Toutes') => void;
+    color: string;
+    onColorChange: (val: string) => void;
     model: string;
     onModelChange: (val: string) => void;
     size: Size | 'Toutes';
     onSizeChange: (val: Size | 'Toutes') => void;
     availableCategories: Category[];
     availableBrands: string[];
-    availableColors: string[];
 }
 
 const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
@@ -34,12 +33,10 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
     size,
     onSizeChange,
     availableCategories,
-    availableBrands,
-    availableColors
+    availableBrands
 }) => {
     const categoriesList = useMemo(() => ['Toutes', ...availableCategories], [availableCategories]);
     const brandsList = useMemo(() => ['Toutes', ...availableBrands], [availableBrands]);
-    const colorsList = useMemo(() => ['Toutes', ...availableColors], [availableColors]);
 
     return (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -72,7 +69,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                 <select
                     value={category}
                     onChange={(e) => onCategoryChange(e.target.value as Category | 'Toutes')}
-                    style={{ flex: '1 1 calc(33% - 0.75rem)', minWidth: '140px' }}
+                    style={{ flex: '1 1 calc(50% - 0.5rem)', minWidth: '140px' }}
                 >
                     {categoriesList.map(c => <option key={c} value={c}>{c === 'Toutes' ? 'Catégorie: Toutes' : c}</option>)}
                 </select>
@@ -80,23 +77,15 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                 <select
                     value={brand}
                     onChange={(e) => onBrandChange(e.target.value)}
-                    style={{ flex: '1 1 calc(33% - 0.75rem)', minWidth: '140px' }}
+                    style={{ flex: '1 1 calc(50% - 0.5rem)', minWidth: '140px' }}
                 >
                     {brandsList.map(b => <option key={b} value={b}>{b === 'Toutes' ? 'Marque: Toutes' : b}</option>)}
                 </select>
 
-                <select
-                    value={color}
-                    onChange={(e) => onColorChange(e.target.value)}
-                    style={{ flex: '1 1 calc(33% - 0.75rem)', minWidth: '140px' }}
-                >
-                    {colorsList.map(cl => <option key={cl} value={cl}>{cl === 'Toutes' ? 'Couleur: Toutes' : cl}</option>)}
-                </select>
-
-                <div style={{ position: 'relative', flex: '1 1 calc(50% - 0.5rem)', minWidth: '140px' }}>
+                <div style={{ position: 'relative', flex: '1 1 calc(33% - 0.75rem)', minWidth: '120px' }}>
                     <input
                         type="text"
-                        placeholder="Modèle (ex: 61022)"
+                        placeholder="Modèle..."
                         value={model}
                         onChange={(e) => onModelChange(e.target.value)}
                         style={{ width: '100%' }}
@@ -109,7 +98,23 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
                     )}
                 </div>
 
-                <div style={{ position: 'relative', flex: '1 1 calc(50% - 0.5rem)', minWidth: '100px' }}>
+                <div style={{ position: 'relative', flex: '1 1 calc(33% - 0.75rem)', minWidth: '120px' }}>
+                    <input
+                        type="text"
+                        placeholder="Couleur..."
+                        value={color}
+                        onChange={(e) => onColorChange(e.target.value)}
+                        style={{ width: '100%' }}
+                    />
+                    {color && (
+                        <button
+                            onClick={() => onColorChange('')}
+                            style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', border: 'none', background: 'transparent', cursor: 'pointer', fontSize: '10px' }}
+                        >✕</button>
+                    )}
+                </div>
+
+                <div style={{ position: 'relative', flex: '1 1 calc(33% - 0.75rem)', minWidth: '100px' }}>
                     <input
                         type="text"
                         placeholder="Taille (ex: 52)"
