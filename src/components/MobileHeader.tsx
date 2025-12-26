@@ -11,7 +11,6 @@ const MobileHeader: React.FC<MobileHeaderProps> = ({ theme, onToggleTheme }) => 
     return (
         <header className="mobile-header">
             <div className="logo-container">
-                <div className="logo-icon">T</div>
                 <span className="logo-text">Chez Gabriel Stock</span>
             </div>
             <div style={{ display: 'flex', gap: '0.5rem' }}>

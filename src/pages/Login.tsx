@@ -55,7 +55,7 @@ const Login: React.FC = () => {
                     }}>T</div>
                     <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '0.5rem' }}>Connexion</h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                        Accédez à votre gestion d'inventaire TailorStock
+                        Accédez à votre gestion d'inventaire Chez Gabriel Stock
                     </p>
                 </div>
 
@@ -139,7 +139,7 @@ const Login: React.FC = () => {
                     fontSize: '0.8125rem',
                     color: 'var(--text-secondary)'
                 }}>
-                    Propulsé par TailorStock Security
+                    Propulsé par Chez Gabriel Security
                 </p>
             </div>
         </div>

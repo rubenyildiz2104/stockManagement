@@ -30,8 +30,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
             <div className="sidebar-header" style={{ position: 'relative' }}>
                 <div className="logo-container" style={{ visibility: isCollapsed ? 'hidden' : 'visible', opacity: isCollapsed ? 0 : 1, transition: 'all 0.2s' }}>
-                    <div className="logo-icon">T</div>
-                    {!isCollapsed && <span className="logo-text">TailorStock</span>}
+                    {!isCollapsed && <span className="logo-text">Chez Gabriel Stock</span>}
                 </div>
                 <button
                     onClick={onToggleCollapse}
