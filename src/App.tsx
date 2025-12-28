@@ -13,6 +13,7 @@ import Settings from './pages/Settings';
 import Login from './pages/Login';
 import MobileNav from './components/MobileNav';
 import MobileHeader from './components/MobileHeader';
+import { ToastContainer, type Toast, type ToastType } from './components/Toast';
 import { supabase } from './lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
@@ -22,6 +23,16 @@ const App: React.FC = () => {
   const [editingGarment, setEditingGarment] = useState<Garment | null>(null);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  const showToast = (message: string, type: ToastType = 'info') => {
+    const id = Math.random().toString(36).substring(2, 9);
+    setToasts(prev => [...prev, { id, message, type }]);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   // Theme & Sidebar State
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -96,9 +107,10 @@ const App: React.FC = () => {
         await deleteGarment(deleteModal.garment.id);
         setGarments(prev => prev.filter(g => g.id !== deleteModal.garment!.id));
         setDeleteModal({ isOpen: false, garment: null });
+        showToast('Article supprimé avec succès', 'success');
       } catch (error) {
         console.error('Error deleting garment:', error);
-        alert('Erreur lors de la suppression');
+        showToast('Erreur lors de la suppression', 'error');
       }
     }
   };
@@ -112,9 +124,10 @@ const App: React.FC = () => {
     try {
       const added = await addGarment(newGarment);
       setGarments(prev => [added, ...prev]);
+      showToast('Article ajouté au stock', 'success');
     } catch (error) {
       console.error('Error adding garment:', error);
-      alert('Erreur lors de l\'ajout');
+      showToast("Erreur lors de l'ajout", 'error');
     }
   };
 
@@ -124,9 +137,10 @@ const App: React.FC = () => {
       setGarments(prev => prev.map(g => g.id === updated.id ? updated : g));
       setEditingGarment(null);
       setCurrentView('inventory');
+      showToast('Article mis à jour', 'success');
     } catch (error) {
       console.error('Error updating garment:', error);
-      alert('Erreur lors de la mise à jour');
+      showToast('Erreur lors de la mise à jour', 'error');
     }
   };
 
@@ -134,10 +148,10 @@ const App: React.FC = () => {
     try {
       const added = await importGarments(importedGarments);
       setGarments(prev => [...added, ...prev]);
-      alert(`${added.length} articles importés avec succès !`);
+      showToast(`${added.length} articles importés avec succès !`, 'success');
     } catch (error) {
       console.error('Error importing garments:', error);
-      alert('Erreur lors de l\'importation');
+      showToast("Erreur lors de l'importation", 'error');
     }
   };
 
@@ -173,6 +187,7 @@ const App: React.FC = () => {
             onDelete={handleDeleteRequest}
             onEdit={handleEdit}
             onImport={handleImport}
+            onUpdate={handleUpdate}
           />
         );
       case 'add-garment':
@@ -217,6 +232,8 @@ const App: React.FC = () => {
 
         <MobileNav currentView={currentView} onViewChange={setCurrentView} />
       </div>
+
+      <ToastContainer toasts={toasts} onRemove={removeToast} />
 
       <DeleteModal
         isOpen={deleteModal.isOpen}

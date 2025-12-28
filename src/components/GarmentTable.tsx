@@ -6,9 +6,10 @@ interface GarmentTableProps {
     garments: Garment[];
     onEdit: (garment: Garment) => void;
     onDelete: (garment: Garment) => void;
+    onStockChange: (garment: Garment, newStock: number) => void;
 }
 
-const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete }) => {
+const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete, onStockChange }) => {
     return (
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -53,9 +54,18 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete 
                                     </span>
                                 </td>
                                 <td data-label="Stock" style={{ padding: '1rem 1.5rem' }}>
-                                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
-                                        {garment.currentStock}
-                                    </span>
+                                    <div className="stock-control">
+                                        <button
+                                            className="btn-stock"
+                                            onClick={() => onStockChange(garment, Math.max(0, garment.currentStock - 1))}
+                                            disabled={garment.currentStock <= 0}
+                                        >-</button>
+                                        <span className="stock-value">{garment.currentStock}</span>
+                                        <button
+                                            className="btn-stock"
+                                            onClick={() => onStockChange(garment, garment.currentStock + 1)}
+                                        >+</button>
+                                    </div>
                                 </td>
                                 <td data-label="Unit." style={{ padding: '1rem 1.5rem', fontSize: '0.875rem' }}>{garment.price.toLocaleString()} €</td>
                                 <td data-label="Total" style={{ padding: '1rem 1.5rem', fontWeight: 700, fontSize: '0.875rem' }}>{(garment.price * garment.currentStock).toLocaleString()} €</td>
