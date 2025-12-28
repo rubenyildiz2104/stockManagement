@@ -1,5 +1,4 @@
-import React from 'react';
-import { Edit2, Trash2, Package } from 'lucide-react';
+import { Edit2, Trash2, Package, Minus, Plus as PlusIcon } from 'lucide-react';
 import type { Garment } from '../types';
 
 interface GarmentTableProps {
@@ -59,12 +58,16 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete,
                                             className="btn-stock"
                                             onClick={() => onStockChange(garment, Math.max(0, garment.currentStock - 1))}
                                             disabled={garment.currentStock <= 0}
-                                        >-</button>
+                                        >
+                                            <Minus size={14} />
+                                        </button>
                                         <span className="stock-value">{garment.currentStock}</span>
                                         <button
                                             className="btn-stock"
                                             onClick={() => onStockChange(garment, garment.currentStock + 1)}
-                                        >+</button>
+                                        >
+                                            <PlusIcon size={14} />
+                                        </button>
                                     </div>
                                 </td>
                                 <td data-label="Unit." style={{ padding: '1rem 1.5rem', fontSize: '0.875rem' }}>{garment.price.toLocaleString()} €</td>
