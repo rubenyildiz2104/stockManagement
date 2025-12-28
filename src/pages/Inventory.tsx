@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { Plus, FileSpreadsheet, PackageSearch, Loader2 } from 'lucide-react';
+import { Plus, FileSpreadsheet, PackageSearch, Loader2, Download } from 'lucide-react';
 import type { Garment, View, Category, Size } from '../types';
 import SearchFilterBar from '../components/SearchFilterBar';
 import GarmentTable from '../components/GarmentTable';
 import { parseExcelStock } from '../utils/excelParser';
+import { exportToExcel } from '../utils/excelExporter';
 
 interface InventoryProps {
     garments: Garment[];
@@ -114,6 +115,10 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                         accept=".xlsx, .xls"
                         style={{ display: 'none' }}
                     />
+                    <button className="btn btn-outline" onClick={() => exportToExcel(filteredGarments)} style={{ flex: 1 }}>
+                        <Download size={18} />
+                        Exporter
+                    </button>
                     <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={isImporting} style={{ flex: 1 }}>
                         {isImporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
                         {isImporting ? 'Import...' : 'Importer'}

@@ -26,6 +26,7 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete,
                     <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-color)', background: 'var(--bg-primary)' }}>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Marque</th>
+                            <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Type</th>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Modèle</th>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Couleur</th>
                             <th style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Taille</th>
@@ -39,6 +40,7 @@ const GarmentTable: React.FC<GarmentTableProps> = ({ garments, onEdit, onDelete,
                         {garments.map((garment) => (
                             <tr key={garment.id} style={{ borderBottom: '1px solid var(--border-color)', transition: 'background 0.2s' }}>
                                 <td data-label="Marque" style={{ padding: '1rem 1.5rem', fontWeight: 600, fontSize: '0.875rem' }}>{garment.brand}</td>
+                                <td data-label="Type" style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{garment.category}</td>
                                 <td data-label="Modèle" style={{ padding: '1rem 1.5rem', fontSize: '0.875rem' }}>{garment.model}</td>
                                 <td data-label="Couleur" style={{ padding: '1rem 1.5rem', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{garment.color}</td>
                                 <td data-label="Taille" style={{ padding: '1rem 1.5rem' }}>
