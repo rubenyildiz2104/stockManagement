@@ -117,17 +117,29 @@ export const deleteGarment = async (id: string): Promise<void> => {
     }
 };
 
-// Importer plusieurs vêtements
+// Importer plusieurs vêtements (par lots pour éviter les dépassements de taille de requête)
 export const importGarments = async (garments: Garment[]): Promise<Garment[]> => {
-    const { data, error } = await supabase
-        .from('garments')
-        .insert(garments.map(g => garmentToDb(g, false)))
-        .select();
+    if (!garments.length) return [];
 
-    if (error) {
-        console.error('Error importing garments:', error);
-        throw error;
+    const BATCH_SIZE = 100;
+    const allResults: Garment[] = [];
+
+    for (let i = 0; i < garments.length; i += BATCH_SIZE) {
+        const batch = garments.slice(i, i + BATCH_SIZE);
+        const { data, error } = await supabase
+            .from('garments')
+            .insert(batch.map(g => garmentToDb(g, false)))
+            .select();
+
+        if (error) {
+            console.error('Error importing batch:', error);
+            throw error;
+        }
+
+        if (data) {
+            allResults.push(...data.map(dbToGarment));
+        }
     }
 
-    return data.map(dbToGarment);
+    return allResults;
 };

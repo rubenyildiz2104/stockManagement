@@ -53,17 +53,17 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        const finalCategory = (formData.useCustomCategory ? formData.customCategory.trim() : formData.category) || 'Autre';
         const commonData = {
             serialNumber: formData.serialNumber,
             name: formData.name,
             brand: formData.brand,
             model: formData.model,
-            category: formData.useCustomCategory ? formData.customCategory : formData.category,
+            category: finalCategory,
             size: formData.size,
             color: formData.color,
             price: Number(formData.price),
             currentStock: Number(formData.currentStock),
-
         };
 
         if (isEditing && initialData) {
@@ -153,7 +153,13 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                                 <select
                                     style={{ flex: 1, minWidth: '200px' }}
                                     value={formData.category}
-                                    onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                    onChange={e => {
+                                        if (e.target.value === '__NEW__') {
+                                            setFormData({ ...formData, useCustomCategory: true, customCategory: '' });
+                                        } else {
+                                            setFormData({ ...formData, category: e.target.value });
+                                        }
+                                    }}
                                 >
                                     {availableCategories.map(c => <option key={c} value={c}>{c}</option>)}
                                     <option value="__NEW__">+ Nouvelle catégorie...</option>
@@ -161,6 +167,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                             ) : (
                                 <input
                                     autoFocus
+                                    required={formData.useCustomCategory}
                                     style={{ flex: 1, minWidth: '200px' }}
                                     placeholder="Entrez une nouvelle catégorie"
                                     value={formData.customCategory}
@@ -168,7 +175,18 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                                 />
                             )}
                             {formData.useCustomCategory && (
-                                <button type="button" className="btn btn-outline" onClick={() => setFormData({ ...formData, useCustomCategory: false })}>Annuler</button>
+                                <button
+                                    type="button"
+                                    className="btn btn-outline"
+                                    onClick={() => setFormData({
+                                        ...formData,
+                                        useCustomCategory: false,
+                                        customCategory: '',
+                                        category: availableCategories[0] || 'Costumes'
+                                    })}
+                                >
+                                    Annuler
+                                </button>
                             )}
                         </div>
                     </div>

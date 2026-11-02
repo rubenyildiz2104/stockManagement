@@ -17,7 +17,7 @@ Exécutez ce SQL dans votre dashboard Supabase (SQL Editor) :
 CREATE TABLE garments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  serial_number TEXT NOT NULL UNIQUE,
+  serial_number TEXT NOT NULL,
   brand TEXT NOT NULL,
   model TEXT NOT NULL,
   category TEXT NOT NULL,
@@ -33,6 +33,11 @@ CREATE TABLE garments (
 CREATE INDEX idx_garments_category ON garments(category);
 CREATE INDEX idx_garments_brand ON garments(brand);
 CREATE INDEX idx_garments_serial_number ON garments(serial_number);
+CREATE INDEX idx_garments_serial_size ON garments(serial_number, size);
+
+-- Si votre table existe déjà et bloque l'import avec l'erreur "duplicate key value violates unique constraint garments_serial_number_key" :
+-- Exécutez simplement cette commande pour retirer la contrainte UNIQUE sur serial_number :
+-- ALTER TABLE garments DROP CONSTRAINT IF EXISTS garments_serial_number_key;
 
 ALTER TABLE garments ENABLE ROW LEVEL SECURITY;
 

@@ -77,7 +77,8 @@ const Sidebar: React.FC<SidebarProps> = ({
                     {!isCollapsed && <span>{theme === 'light' ? 'Mode Sombre' : 'Mode Clair'}</span>}
                 </button>
                 <button
-                    className="nav-item"
+                    className={`nav-item ${currentView === 'settings' ? 'active' : ''}`}
+                    onClick={() => onViewChange('settings')}
                     title={isCollapsed ? 'Paramètres' : ''}
                     style={{ justifyContent: isCollapsed ? 'center' : 'flex-start', marginBottom: '0.5rem' }}
                 >

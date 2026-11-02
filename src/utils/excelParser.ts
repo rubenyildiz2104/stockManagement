@@ -37,11 +37,11 @@ export const parseExcelStock = (buffer: ArrayBuffer): Garment[] => {
         // Skipping header rows
         if (index < 2) return;
 
-        const brand = row['A'];
-        const type = row['B']; // Raw type from Excel used as dynamic category
-        const serial = row['C'];
-        const model = row['D'] || '';
-        const color = row['E'] || 'Standard';
+        const brand = typeof row['A'] === 'string' ? row['A'].trim() : String(row['A'] || '').trim();
+        const type = typeof row['B'] === 'string' ? row['B'].trim() : String(row['B'] || '').trim(); // Raw type from Excel used as dynamic category
+        const serial = typeof row['C'] === 'string' ? row['C'].trim() : String(row['C'] || '').trim();
+        const model = typeof row['D'] === 'string' ? row['D'].trim() : String(row['D'] || '').trim();
+        const color = typeof row['E'] === 'string' ? row['E'].trim() : String(row['E'] || 'Standard').trim();
 
         let priceVal = row['AE'];
         if (typeof priceVal === 'string') {
@@ -55,9 +55,9 @@ export const parseExcelStock = (buffer: ArrayBuffer): Garment[] => {
         Object.keys(sizeColumns).forEach(colKey => {
             const stock = parseInt(row[colKey]);
             if (!isNaN(stock) && stock > 0) {
-                const size = sizeColumns[colKey];
+                const size = String(sizeColumns[colKey]).trim();
                 garments.push({
-                    id: Math.random().toString(36).substr(2, 9),
+                    id: Math.random().toString(36).substring(2, 11),
                     serialNumber: String(serial || model || 'N/A'),
                     name: `${type || ''} ${brand} ${model}`.trim(),
                     brand: String(brand),
@@ -67,12 +67,23 @@ export const parseExcelStock = (buffer: ArrayBuffer): Garment[] => {
                     color: String(color),
                     price: price,
                     currentStock: stock,
-
                     dateAdded: new Date().toISOString().split('T')[0]
                 });
             }
         });
     });
 
-    return garments;
+    // Consolidate duplicates within the imported list if same serial + size + color + brand
+    const consolidatedMap = new Map<string, Garment>();
+    for (const g of garments) {
+        const key = `${g.serialNumber}___${g.size}___${g.color}___${g.brand}`;
+        const existing = consolidatedMap.get(key);
+        if (existing) {
+            existing.currentStock += g.currentStock;
+        } else {
+            consolidatedMap.set(key, g);
+        }
+    }
+
+    return Array.from(consolidatedMap.values());
 };
