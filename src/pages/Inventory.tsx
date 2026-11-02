@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { Plus, FileSpreadsheet, PackageSearch, Loader2, Download, History, Trash2, X } from 'lucide-react';
+import { Plus, FileSpreadsheet, PackageSearch, Loader2, Download, History, Trash2, X, Barcode } from 'lucide-react';
 import type { Garment, View, Category, Size } from '../types';
 import SearchFilterBar from '../components/SearchFilterBar';
 import GarmentTable from '../components/GarmentTable';
@@ -16,6 +16,7 @@ interface InventoryProps {
     onImport: (garments: Garment[]) => void;
     onUpdate: (garment: Garment) => void;
     onBulkDelete: (ids: string[]) => void;
+    onOpenScanner?: () => void;
 }
 
 const SkeletonTable = () => (
@@ -47,7 +48,8 @@ const Inventory: React.FC<InventoryProps> = ({
     onEdit,
     onImport,
     onUpdate,
-    onBulkDelete
+    onBulkDelete,
+    onOpenScanner
 }) => {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState<Category | 'Toutes'>('Toutes');
@@ -173,6 +175,17 @@ const Inventory: React.FC<InventoryProps> = ({
                         accept=".xlsx, .xls"
                         style={{ display: 'none' }}
                     />
+                    {onOpenScanner && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={onOpenScanner}
+                            style={{ flex: 1 }}
+                            title="Scanner un code-barres pour vente ou réappro"
+                        >
+                            <Barcode size={17} />
+                            Scanner
+                        </button>
+                    )}
                     <button
                         className="btn btn-outline"
                         onClick={() => setIsHistoryOpen(true)}

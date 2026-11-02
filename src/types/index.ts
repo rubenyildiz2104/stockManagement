@@ -14,6 +14,7 @@ export interface Garment {
   price: number;
   currentStock: number;
   dateAdded: string;
+  barcode?: string;
 }
 
 export type View = 'dashboard' | 'inventory' | 'add-garment' | 'reports' | 'settings';

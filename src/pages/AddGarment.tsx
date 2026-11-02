@@ -8,9 +8,10 @@ interface AddGarmentProps {
     onUpdate: (garment: Garment) => void;
     onNavigate: (view: View) => void;
     initialData?: Garment | null;
+    initialBarcode?: string;
 }
 
-const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNavigate, initialData }) => {
+const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNavigate, initialData, initialBarcode }) => {
     const isEditing = !!initialData;
 
     const availableCategories = useMemo(() => {
@@ -28,8 +29,8 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
         size: 'M' as Size,
         color: '',
         price: '',
-        currentStock: '0',
-
+        currentStock: '1',
+        barcode: initialBarcode || '',
     });
 
     useEffect(() => {
@@ -46,10 +47,12 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                 color: initialData.color,
                 price: String(initialData.price),
                 currentStock: String(initialData.currentStock),
-
+                barcode: initialData.barcode || '',
             });
+        } else if (initialBarcode) {
+            setFormData(prev => ({ ...prev, barcode: initialBarcode }));
         }
-    }, [initialData]);
+    }, [initialData, initialBarcode]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -64,6 +67,7 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
             color: formData.color,
             price: Number(formData.price),
             currentStock: Number(formData.currentStock),
+            barcode: formData.barcode.trim() || undefined,
         };
 
         if (isEditing && initialData) {
@@ -229,6 +233,15 @@ const AddGarment: React.FC<AddGarmentProps> = ({ garments, onAdd, onUpdate, onNa
                             type="number"
                             value={formData.currentStock}
                             onChange={e => setFormData({ ...formData, currentStock: e.target.value })}
+                        />
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', gridColumn: '1 / -1' }}>
+                        <label style={{ fontSize: '0.875rem', fontWeight: 600 }}>Code-barres (optionnel)</label>
+                        <input
+                            placeholder="ex: 8033285123456"
+                            value={formData.barcode}
+                            onChange={e => setFormData({ ...formData, barcode: e.target.value })}
                         />
                     </div>
 

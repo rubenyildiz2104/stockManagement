@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, TrendingUp, Plus, AlertTriangle, Tag, ArrowRight } from 'lucide-react';
+import { Package, TrendingUp, Plus, AlertTriangle, Tag, ArrowRight, Barcode } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import StockChart from '../components/StockChart';
 import type { Garment, View } from '../types';
@@ -8,9 +8,10 @@ interface DashboardProps {
     garments: Garment[];
     onNavigate: (view: View) => void;
     onUpdate?: (garment: Garment) => void;
+    onOpenScanner?: () => void;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate }) => {
+const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate, onOpenScanner }) => {
     const totalItems = garments.reduce((sum, g) => sum + g.currentStock, 0);
     const totalValue = garments.reduce((sum, item) => sum + (item.price * item.currentStock), 0);
 
@@ -24,10 +25,18 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                     <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: 800 }}>Tableau de bord</h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Aperçu et suivi de votre boutique</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => onNavigate('add-garment')}>
-                    <Plus size={18} />
-                    Ajouter un vêtement
-                </button>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                    {onOpenScanner && (
+                        <button className="btn btn-outline" onClick={onOpenScanner}>
+                            <Barcode size={18} />
+                            Scanner
+                        </button>
+                    )}
+                    <button className="btn btn-primary" onClick={() => onNavigate('add-garment')}>
+                        <Plus size={18} />
+                        Ajouter un vêtement
+                    </button>
+                </div>
             </div>
 
             {/* KPI Cards */}

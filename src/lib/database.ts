@@ -14,6 +14,7 @@ const dbToGarment = (dbRow: any): Garment => ({
     price: dbRow.price,
     currentStock: dbRow.current_stock,
     dateAdded: dbRow.date_added,
+    barcode: dbRow.barcode || undefined,
 });
 
 // Convertir les données de l'application vers le format de la base
@@ -29,6 +30,7 @@ const garmentToDb = (garment: Omit<Garment, 'id' | 'dateAdded'> & { id?: string;
         price: garment.price,
         current_stock: garment.currentStock,
         date_added: garment.dateAdded,
+        barcode: garment.barcode || null,
     };
 
     // N'inclure l'ID que pour les mises à jour (update)
@@ -156,4 +158,18 @@ export const importGarments = async (garments: Garment[]): Promise<Garment[]> =>
     }
 
     return allResults;
+};
+
+// Associer un code-barres à un ou plusieurs vêtements
+export const linkBarcodeToGarments = async (barcode: string, garmentIds: string[]): Promise<void> => {
+    if (!garmentIds.length) return;
+    const { error } = await supabase
+        .from('garments')
+        .update({ barcode })
+        .in('id', garmentIds);
+
+    if (error) {
+        console.error('Error linking barcode to garments:', error);
+        throw error;
+    }
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, Package, BarChart3, Settings, Menu, Sun, Moon, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, BarChart3, Settings, Menu, Sun, Moon, LogOut, Barcode } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { View } from '../types';
 
@@ -10,6 +10,7 @@ interface SidebarProps {
     onToggleCollapse: () => void;
     theme: 'light' | 'dark';
     onToggleTheme: () => void;
+    onOpenScanner?: () => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -18,7 +19,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     isCollapsed,
     onToggleCollapse,
     theme,
-    onToggleTheme
+    onToggleTheme,
+    onOpenScanner
 }) => {
     const menuItems = [
         { id: 'dashboard' as View, label: 'Tableau de bord', icon: LayoutDashboard },
@@ -64,6 +66,18 @@ const Sidebar: React.FC<SidebarProps> = ({
                         {!isCollapsed && <span>{item.label}</span>}
                     </button>
                 ))}
+
+                {onOpenScanner && (
+                    <button
+                        className="nav-item"
+                        onClick={onOpenScanner}
+                        title={isCollapsed ? 'Scanner code-barres' : ''}
+                        style={{ justifyContent: isCollapsed ? 'center' : 'flex-start' }}
+                    >
+                        <Barcode size={20} />
+                        {!isCollapsed && <span>Scanner</span>}
+                    </button>
+                )}
             </nav>
 
             <div className="sidebar-footer">

@@ -22,6 +22,7 @@ export interface Database {
                     price: number
                     current_stock: number
                     date_added: string
+                    barcode?: string | null
                     created_at: string
                     updated_at: string
                 }
@@ -37,6 +38,7 @@ export interface Database {
                     price: number
                     current_stock?: number
                     date_added?: string
+                    barcode?: string | null
                     created_at?: string
                     updated_at?: string
                 }
@@ -52,6 +54,7 @@ export interface Database {
                     price?: number
                     current_stock?: number
                     date_added?: string
+                    barcode?: string | null
                     created_at?: string
                     updated_at?: string
                 }

@@ -39,6 +39,10 @@ CREATE INDEX idx_garments_serial_size ON garments(serial_number, size);
 -- Exécutez simplement cette commande pour retirer la contrainte UNIQUE sur serial_number :
 -- ALTER TABLE garments DROP CONSTRAINT IF EXISTS garments_serial_number_key;
 
+-- Optionnel: Ajouter la colonne code-barres pour la fonction scan :
+-- ALTER TABLE garments ADD COLUMN IF NOT EXISTS barcode TEXT;
+-- CREATE INDEX IF NOT EXISTS idx_garments_barcode ON garments(barcode);
+
 ALTER TABLE garments ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Enable read access for all users" ON garments

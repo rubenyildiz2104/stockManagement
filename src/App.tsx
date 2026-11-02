@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import DeleteModal from './components/DeleteModal';
+import BarcodeScannerModal from './components/BarcodeScannerModal';
 import type { View, Garment } from './types';
-import { getAllGarments, addGarment, updateGarment, deleteGarment, deleteGarments, importGarments } from './lib/database';
+import { getAllGarments, addGarment, updateGarment, deleteGarment, deleteGarments, importGarments, linkBarcodeToGarments } from './lib/database';
 import { recordStockMovement } from './lib/stockHistory';
 import './index.css';
 
@@ -25,6 +26,8 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [scannerInitialBarcode, setScannerInitialBarcode] = useState<string | undefined>(undefined);
 
   const showToast = (message: string, type: ToastType = 'info') => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -214,6 +217,17 @@ const App: React.FC = () => {
     }
   };
 
+  const handleLinkBarcode = async (barcode: string, garmentIds: string[]) => {
+    try {
+      await linkBarcodeToGarments(barcode, garmentIds);
+      setGarments(prev => prev.map(g => garmentIds.includes(g.id) ? { ...g, barcode } : g));
+      showToast(`Code-barres associé à ${garmentIds.length} article(s)`, 'success');
+    } catch (e) {
+      console.error('Error linking barcode:', e);
+      showToast("Erreur lors de l'association du code-barres", 'error');
+    }
+  };
+
   if (loading && !session) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-primary)' }}>
@@ -237,7 +251,14 @@ const App: React.FC = () => {
 
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard garments={garments} onNavigate={setCurrentView} onUpdate={handleUpdate} />;
+        return (
+          <Dashboard
+            garments={garments}
+            onNavigate={setCurrentView}
+            onUpdate={handleUpdate}
+            onOpenScanner={() => setIsScannerOpen(true)}
+          />
+        );
       case 'inventory':
         return (
           <Inventory
@@ -248,6 +269,7 @@ const App: React.FC = () => {
             onImport={handleImport}
             onUpdate={handleUpdate}
             onBulkDelete={handleBulkDelete}
+            onOpenScanner={() => setIsScannerOpen(true)}
           />
         );
       case 'add-garment':
@@ -257,8 +279,10 @@ const App: React.FC = () => {
             onAdd={handleAdd}
             onUpdate={handleUpdate}
             initialData={editingGarment}
+            initialBarcode={scannerInitialBarcode}
             onNavigate={(view) => {
               setEditingGarment(null);
+              setScannerInitialBarcode(undefined);
               setCurrentView(view);
             }}
           />
@@ -268,14 +292,18 @@ const App: React.FC = () => {
       case 'settings':
         return <Settings theme={theme} onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />;
       default:
-        return <Dashboard garments={garments} onNavigate={setCurrentView} />;
+        return <Dashboard garments={garments} onNavigate={setCurrentView} onOpenScanner={() => setIsScannerOpen(true)} />;
     }
   };
 
   return (
     <>
       <div className="layout-container">
-        <MobileHeader theme={theme} onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+        <MobileHeader
+          theme={theme}
+          onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          onOpenScanner={() => setIsScannerOpen(true)}
+        />
 
         <Sidebar
           currentView={currentView}
@@ -284,6 +312,7 @@ const App: React.FC = () => {
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           theme={theme}
           onToggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+          onOpenScanner={() => setIsScannerOpen(true)}
         />
 
         <main className={`main-content ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -300,6 +329,19 @@ const App: React.FC = () => {
         itemName={deleteModal.garment?.name || ''}
         onClose={() => setDeleteModal({ isOpen: false, garment: null })}
         onConfirm={confirmDelete}
+      />
+
+      <BarcodeScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        garments={garments}
+        onUpdateStock={(garment, newStock) => handleUpdate({ ...garment, currentStock: newStock })}
+        onLinkBarcode={handleLinkBarcode}
+        onNavigateToAdd={(barcode) => {
+          setEditingGarment(null);
+          setScannerInitialBarcode(barcode);
+          setCurrentView('add-garment');
+        }}
       />
     </>
   );
