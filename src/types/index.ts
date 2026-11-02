@@ -32,6 +32,7 @@ export interface StockMovement {
   previousStock: number;
   newStock: number;
   change: number;
+  price?: number;
   type: StockMovementType;
   date: string; // ISO string
 }

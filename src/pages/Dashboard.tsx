@@ -2,6 +2,7 @@ import React from 'react';
 import { Package, TrendingUp, Plus, AlertTriangle, Tag, ArrowRight, Barcode } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import StockChart from '../components/StockChart';
+import DailySalesTracker from '../components/DailySalesTracker';
 import type { Garment, View } from '../types';
 
 interface DashboardProps {
@@ -67,6 +68,9 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate, o
                     Icon={Tag}
                 />
             </div>
+
+            {/* Daily Sales & Turnover Tracker */}
+            <DailySalesTracker onNavigateToReports={() => onNavigate('reports')} />
 
             {/* Out-of-Stock Alert List Widget */}
             <div className="card" style={{ padding: '1.25rem 1.5rem' }}>

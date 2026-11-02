@@ -47,6 +47,7 @@ export const recordStockMovement = async (
             previous_stock: movement.previousStock,
             new_stock: movement.newStock,
             change: movement.change,
+            price: movement.price || 0,
             type: movement.type,
             created_at: newMovement.date
         }]).then(({ error }) => {

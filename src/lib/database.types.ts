@@ -72,6 +72,7 @@ export interface Database {
                     previous_stock: number
                     new_stock: number
                     change: number
+                    price?: number | null
                     type: string
                     created_at: string
                 }
@@ -86,6 +87,7 @@ export interface Database {
                     previous_stock: number
                     new_stock: number
                     change: number
+                    price?: number | null
                     type: string
                     created_at?: string
                 }
@@ -100,6 +102,7 @@ export interface Database {
                     previous_stock?: number
                     new_stock?: number
                     change?: number
+                    price?: number | null
                     type?: string
                     created_at?: string
                 }

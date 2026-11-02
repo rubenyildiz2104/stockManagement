@@ -138,6 +138,7 @@ const App: React.FC = () => {
         previousStock: 0,
         newStock: added.currentStock,
         change: added.currentStock,
+        price: added.price,
         type: 'initial'
       });
       showToast('Article ajouté au stock', 'success');
@@ -165,6 +166,7 @@ const App: React.FC = () => {
           previousStock: oldGarment.currentStock,
           newStock: updated.currentStock,
           change: diff,
+          price: updated.price || oldGarment.price,
           type: diff > 0 ? 'increase' : 'decrease'
         });
       }
@@ -195,6 +197,7 @@ const App: React.FC = () => {
           previousStock: 0,
           newStock: item.currentStock,
           change: item.currentStock,
+          price: item.price,
           type: 'import'
         });
       });
