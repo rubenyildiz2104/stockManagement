@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, TrendingUp, Plus, AlertTriangle, AlertCircle, ArrowRight } from 'lucide-react';
+import { Package, TrendingUp, Plus, AlertTriangle, Tag, ArrowRight } from 'lucide-react';
 import StatCard from '../components/StatCard';
 import StockChart from '../components/StockChart';
 import type { Garment, View } from '../types';
@@ -15,15 +15,14 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
     const totalValue = garments.reduce((sum, item) => sum + (item.price * item.currentStock), 0);
 
     const outOfStockItems = garments.filter(g => g.currentStock === 0);
-    const lowStockItems = garments.filter(g => g.currentStock > 0 && g.currentStock <= 2);
-    const alertItems = [...outOfStockItems, ...lowStockItems];
+    const singlePieceItems = garments.filter(g => g.currentStock === 1);
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
                 <div>
                     <h1 style={{ fontSize: 'clamp(1.5rem, 5vw, 2rem)', fontWeight: 800 }}>Tableau de bord</h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Aperçu et alertes de votre inventaire</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Aperçu et suivi de votre boutique</p>
                 </div>
                 <button className="btn btn-primary" onClick={() => onNavigate('add-garment')}>
                     <Plus size={18} />
@@ -36,7 +35,7 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                 <StatCard
                     title="Unités Totales"
                     value={totalItems}
-                    subValue="Nombre total de pièces"
+                    subValue="Nombre total de pièces en stock"
                     Icon={Package}
                 />
                 <StatCard
@@ -46,21 +45,21 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                     Icon={TrendingUp}
                 />
                 <StatCard
-                    title="Ruptures de Stock"
+                    title="Articles Épuisés"
                     value={outOfStockItems.length}
                     subValue="Articles à stock 0"
                     Icon={AlertTriangle}
                     variant={outOfStockItems.length > 0 ? 'danger' : 'default'}
                 />
                 <StatCard
-                    title="Stock Critique"
-                    value={lowStockItems.length}
-                    subValue="Articles avec 1 ou 2 unités"
-                    Icon={AlertCircle}
+                    title="Pièces Uniques"
+                    value={singlePieceItems.length}
+                    subValue="Modèles à 1 exemplaire"
+                    Icon={Tag}
                 />
             </div>
 
-            {/* Low Stock Alert List Widget */}
+            {/* Out-of-Stock Alert List Widget */}
             <div className="card" style={{ padding: '1.25rem 1.5rem' }}>
                 <div style={{
                     display: 'flex',
@@ -74,18 +73,20 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                         <div style={{
                             padding: '0.5rem',
                             borderRadius: '8px',
-                            background: alertItems.length > 0 ? 'var(--accent-red-light)' : 'rgba(16, 185, 129, 0.12)',
-                            color: alertItems.length > 0 ? 'var(--accent-red)' : '#10b981',
+                            background: outOfStockItems.length > 0 ? 'var(--accent-red-light)' : 'rgba(16, 185, 129, 0.12)',
+                            color: outOfStockItems.length > 0 ? 'var(--accent-red)' : '#10b981',
                             display: 'flex'
                         }}>
-                            {alertItems.length > 0 ? <AlertTriangle size={20} /> : <Package size={20} />}
+                            {outOfStockItems.length > 0 ? <AlertTriangle size={20} /> : <Package size={20} />}
                         </div>
                         <div>
                             <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>
-                                Alertes de Réapprovisionnement
+                                Articles Épuisés (Stock 0)
                             </h3>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                                {outOfStockItems.length} en rupture • {lowStockItems.length} en stock faible
+                                {outOfStockItems.length === 0
+                                    ? 'Tous les modèles sont disponibles en boutique'
+                                    : `${outOfStockItems.length} article(s) à réapprovisionner ou archiver`}
                             </p>
                         </div>
                     </div>
@@ -100,7 +101,7 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                     </button>
                 </div>
 
-                {alertItems.length === 0 ? (
+                {outOfStockItems.length === 0 ? (
                     <div style={{
                         padding: '1.5rem',
                         textAlign: 'center',
@@ -109,7 +110,7 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                         color: 'var(--text-secondary)',
                         fontSize: '0.875rem'
                     }}>
-                        ✅ Tous vos articles ont un niveau de stock suffisant (aucun article sous le seuil critique).
+                        ✅ Aucun article en rupture de stock. Tous les modèles sont disponibles en magasin.
                     </div>
                 ) : (
                     <div style={{
@@ -117,57 +118,54 @@ const Dashboard: React.FC<DashboardProps> = ({ garments, onNavigate, onUpdate })
                         gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
                         gap: '0.75rem'
                     }}>
-                        {alertItems.slice(0, 6).map((garment) => {
-                            const isOut = garment.currentStock === 0;
-                            return (
-                                <div
-                                    key={garment.id}
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'space-between',
-                                        alignItems: 'center',
-                                        padding: '0.85rem 1rem',
-                                        borderRadius: '10px',
-                                        border: `1px solid ${isOut ? 'rgba(239, 68, 68, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
-                                        background: 'var(--bg-secondary)',
-                                        gap: '0.75rem'
-                                    }}
-                                >
-                                    <div style={{ minWidth: 0, flex: 1 }}>
-                                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.25rem' }}>
-                                            <span className={`badge ${isOut ? 'badge-danger' : 'badge-warning'}`}>
-                                                {isOut ? 'Rupture (0)' : `Reste: ${garment.currentStock}`}
-                                            </span>
-                                            <span style={{ fontSize: '0.725rem', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
-                                                {garment.serialNumber}
-                                            </span>
-                                        </div>
-                                        <div style={{ fontWeight: 700, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {garment.name}
-                                        </div>
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                                            {garment.brand} • T.{garment.size} • {garment.color}
-                                        </div>
+                        {outOfStockItems.slice(0, 8).map((garment) => (
+                            <div
+                                key={garment.id}
+                                style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    padding: '0.85rem 1rem',
+                                    borderRadius: '10px',
+                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                    background: 'var(--bg-secondary)',
+                                    gap: '0.75rem'
+                                }}
+                            >
+                                <div style={{ minWidth: 0, flex: 1 }}>
+                                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '0.25rem' }}>
+                                        <span className="badge badge-danger">
+                                            Épuisé (0)
+                                        </span>
+                                        <span style={{ fontSize: '0.725rem', fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
+                                            {garment.serialNumber}
+                                        </span>
                                     </div>
-
-                                    {onUpdate && (
-                                        <button
-                                            className="btn btn-outline"
-                                            onClick={() => onUpdate({ ...garment, currentStock: garment.currentStock + 1 })}
-                                            style={{
-                                                padding: '0.4rem 0.65rem',
-                                                fontSize: '0.75rem',
-                                                whiteSpace: 'nowrap',
-                                                borderColor: isOut ? 'var(--accent-red)' : undefined
-                                            }}
-                                            title="Ajouter 1 unité en stock"
-                                        >
-                                            <Plus size={14} /> +1
-                                        </button>
-                                    )}
+                                    <div style={{ fontWeight: 700, fontSize: '0.875rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {garment.name}
+                                    </div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                                        {garment.brand} • T.{garment.size} • {garment.color}
+                                    </div>
                                 </div>
-                            );
-                        })}
+
+                                {onUpdate && (
+                                    <button
+                                        className="btn btn-outline"
+                                        onClick={() => onUpdate({ ...garment, currentStock: 1 })}
+                                        style={{
+                                            padding: '0.4rem 0.65rem',
+                                            fontSize: '0.75rem',
+                                            whiteSpace: 'nowrap',
+                                            borderColor: 'var(--accent-red)'
+                                        }}
+                                        title="Réapprovisionner 1 pièce"
+                                    >
+                                        <Plus size={14} /> +1 pièce
+                                    </button>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 )}
             </div>

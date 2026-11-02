@@ -91,12 +91,12 @@ const GarmentTable: React.FC<GarmentTableProps> = ({
 
     const renderStatusBadge = (stock: number) => {
         if (stock === 0) {
-            return <span className="badge badge-danger">Rupture</span>;
+            return <span className="badge badge-danger">Épuisé (0)</span>;
         }
-        if (stock <= 2) {
-            return <span className="badge badge-warning">Stock Faible</span>;
+        if (stock === 1) {
+            return <span className="badge badge-info">Pièce unique</span>;
         }
-        return <span className="badge badge-success">En Stock</span>;
+        return <span className="badge badge-success">En stock ({stock})</span>;
     };
 
     return (
