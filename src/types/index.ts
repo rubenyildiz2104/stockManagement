@@ -17,3 +17,20 @@ export interface Garment {
 }
 
 export type View = 'dashboard' | 'inventory' | 'add-garment' | 'reports' | 'settings';
+
+export type StockMovementType = 'increase' | 'decrease' | 'initial' | 'import' | 'manual';
+
+export interface StockMovement {
+  id: string;
+  garmentId?: string;
+  garmentName: string;
+  serialNumber: string;
+  brand: string;
+  size: string;
+  color: string;
+  previousStock: number;
+  newStock: number;
+  change: number;
+  type: StockMovementType;
+  date: string; // ISO string
+}

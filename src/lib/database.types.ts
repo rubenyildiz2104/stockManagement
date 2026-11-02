@@ -57,6 +57,51 @@ export interface Database {
                 }
                 Relationships: []
             }
+            stock_movements: {
+                Row: {
+                    id: string
+                    garment_id: string | null
+                    garment_name: string
+                    serial_number: string
+                    brand: string
+                    size: string
+                    color: string
+                    previous_stock: number
+                    new_stock: number
+                    change: number
+                    type: string
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    garment_id?: string | null
+                    garment_name: string
+                    serial_number: string
+                    brand: string
+                    size: string
+                    color: string
+                    previous_stock: number
+                    new_stock: number
+                    change: number
+                    type: string
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    garment_id?: string | null
+                    garment_name?: string
+                    serial_number?: string
+                    brand?: string
+                    size?: string
+                    color?: string
+                    previous_stock?: number
+                    new_stock?: number
+                    change?: number
+                    type?: string
+                    created_at?: string
+                }
+                Relationships: []
+            }
         }
         Views: {
             [_ in never]: never

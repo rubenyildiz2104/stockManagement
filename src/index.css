@@ -447,3 +447,117 @@ textarea {
     max-width: 520px;
   }
 }
+
+/* Stock Status Badges */
+.badge-danger {
+  background: var(--accent-red-light);
+  color: var(--accent-red);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* Sortable Table Header */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+th.sortable:hover {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.sort-header-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Table Pagination Controls */
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  font-size: 0.85rem;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pagination-btn {
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: var(--bg-primary);
+  border-color: var(--text-secondary);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-btn.active {
+  background: var(--accent-black);
+  color: var(--btn-text);
+  border-color: var(--accent-black);
+}
+
+.page-size-select {
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  width: auto;
+  min-width: 75px;
+}
+
+/* Bulk Selection Action Bar */
+.bulk-actions-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--accent-black);
+  color: var(--btn-text);
+  box-shadow: var(--shadow-md);
+  animation: fadeIn 0.2s ease-out;
+  flex-wrap: wrap;
+}
+
+/* Checkbox styling */
+.row-checkbox {
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+  accent-color: var(--accent-black);
+}

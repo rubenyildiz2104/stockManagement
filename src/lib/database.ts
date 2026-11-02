@@ -117,6 +117,20 @@ export const deleteGarment = async (id: string): Promise<void> => {
     }
 };
 
+// Supprimer plusieurs vêtements en lot
+export const deleteGarments = async (ids: string[]): Promise<void> => {
+    if (!ids.length) return;
+    const { error } = await supabase
+        .from('garments')
+        .delete()
+        .in('id', ids);
+
+    if (error) {
+        console.error('Error deleting batch garments:', error);
+        throw error;
+    }
+};
+
 // Importer plusieurs vêtements (par lots pour éviter les dépassements de taille de requête)
 export const importGarments = async (garments: Garment[]): Promise<Garment[]> => {
     if (!garments.length) return [];

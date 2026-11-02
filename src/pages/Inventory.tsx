@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useRef } from 'react';
-import { Plus, FileSpreadsheet, PackageSearch, Loader2, Download } from 'lucide-react';
+import { Plus, FileSpreadsheet, PackageSearch, Loader2, Download, History, Trash2, X } from 'lucide-react';
 import type { Garment, View, Category, Size } from '../types';
 import SearchFilterBar from '../components/SearchFilterBar';
 import GarmentTable from '../components/GarmentTable';
+import StockHistoryModal from '../components/StockHistoryModal';
+import BulkDeleteModal from '../components/BulkDeleteModal';
 import { parseExcelStock } from '../utils/excelParser';
 import { exportToExcel } from '../utils/excelExporter';
 
@@ -13,6 +15,7 @@ interface InventoryProps {
     onEdit: (garment: Garment) => void;
     onImport: (garments: Garment[]) => void;
     onUpdate: (garment: Garment) => void;
+    onBulkDelete: (ids: string[]) => void;
 }
 
 const SkeletonTable = () => (
@@ -37,7 +40,15 @@ const EmptyState = () => (
     </div>
 );
 
-const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, onEdit, onImport, onUpdate }) => {
+const Inventory: React.FC<InventoryProps> = ({
+    garments,
+    onNavigate,
+    onDelete,
+    onEdit,
+    onImport,
+    onUpdate,
+    onBulkDelete
+}) => {
     const [search, setSearch] = useState('');
     const [category, setCategory] = useState<Category | 'Toutes'>('Toutes');
     const [size, setSize] = useState<Size | 'Toutes'>('Toutes');
@@ -45,6 +56,10 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
     const [color, setColor] = useState('');
     const [model, setModel] = useState('');
     const [isImporting, setIsImporting] = useState(false);
+    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+    const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
+    const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const { availableCategories, availableBrands } = useMemo(() => {
@@ -96,6 +111,49 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
         onUpdate({ ...garment, currentStock: newStock });
     };
 
+    // Toggle individual row selection
+    const handleToggleSelect = (id: string) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) {
+                next.delete(id);
+            } else {
+                next.add(id);
+            }
+            return next;
+        });
+    };
+
+    // Toggle select all on current page
+    const handleToggleSelectAll = (idsOnPage: string[]) => {
+        setSelectedIds(prev => {
+            const next = new Set(prev);
+            const allSelected = idsOnPage.length > 0 && idsOnPage.every(id => next.has(id));
+            if (allSelected) {
+                idsOnPage.forEach(id => next.delete(id));
+            } else {
+                idsOnPage.forEach(id => next.add(id));
+            }
+            return next;
+        });
+    };
+
+    // Selected garments subset
+    const selectedGarments = useMemo(() => {
+        return garments.filter(g => selectedIds.has(g.id));
+    }, [garments, selectedIds]);
+
+    const handleExportSelected = () => {
+        if (!selectedGarments.length) return;
+        exportToExcel(selectedGarments);
+    };
+
+    const handleConfirmBulkDelete = () => {
+        onBulkDelete(Array.from(selectedIds));
+        setSelectedIds(new Set());
+        setIsBulkDeleteOpen(false);
+    };
+
     const isLoading = garments.length === 0 && search === '';
 
     return (
@@ -107,7 +165,7 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                         {filteredGarments.length} article(s) trouvé(s)
                     </p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', width: '100%', maxWidth: 'max-content' }}>
+                <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', width: '100%', maxWidth: 'max-content' }}>
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -115,20 +173,97 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                         accept=".xlsx, .xls"
                         style={{ display: 'none' }}
                     />
-                    <button className="btn btn-outline" onClick={() => exportToExcel(filteredGarments)} style={{ flex: 1 }}>
-                        <Download size={18} />
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => setIsHistoryOpen(true)}
+                        style={{ flex: 1 }}
+                        title="Consulter l'historique des entrées / sorties"
+                    >
+                        <History size={17} />
+                        Historique
+                    </button>
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => exportToExcel(filteredGarments)}
+                        style={{ flex: 1 }}
+                        title="Exporter tous les articles filtrés en Excel"
+                    >
+                        <Download size={17} />
                         Exporter
                     </button>
-                    <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} disabled={isImporting} style={{ flex: 1 }}>
-                        {isImporting ? <Loader2 size={18} className="animate-spin" /> : <FileSpreadsheet size={18} />}
+                    <button
+                        className="btn btn-outline"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isImporting}
+                        style={{ flex: 1 }}
+                    >
+                        {isImporting ? <Loader2 size={17} className="animate-spin" /> : <FileSpreadsheet size={17} />}
                         {isImporting ? 'Import...' : 'Importer'}
                     </button>
-                    <button className="btn btn-primary" onClick={() => onNavigate('add-garment')} style={{ flex: 1.2 }}>
-                        <Plus size={18} />
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => onNavigate('add-garment')}
+                        style={{ flex: 1.2 }}
+                    >
+                        <Plus size={17} />
                         Ajouter
                     </button>
                 </div>
             </div>
+
+            {/* Bulk Selection Floating / Top Action Bar */}
+            {selectedIds.size > 0 && (
+                <div className="bulk-actions-bar">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <span style={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                            {selectedIds.size} article(s) sélectionné(s)
+                        </span>
+                        <button
+                            onClick={() => setSelectedIds(new Set())}
+                            style={{
+                                color: 'var(--btn-text)',
+                                opacity: 0.8,
+                                padding: '0.2rem',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                                fontSize: '0.75rem',
+                                textDecoration: 'underline'
+                            }}
+                        >
+                            <X size={14} /> Désélectionner
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <button
+                            className="btn btn-outline"
+                            onClick={handleExportSelected}
+                            style={{
+                                background: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.25)',
+                                color: '#fff',
+                                padding: '0.45rem 0.85rem'
+                            }}
+                        >
+                            <Download size={15} />
+                            Exporter la sélection ({selectedIds.size})
+                        </button>
+                        <button
+                            className="btn"
+                            onClick={() => setIsBulkDeleteOpen(true)}
+                            style={{
+                                background: 'var(--accent-red)',
+                                color: '#fff',
+                                padding: '0.45rem 0.85rem'
+                            }}
+                        >
+                            <Trash2 size={15} />
+                            Supprimer la sélection
+                        </button>
+                    </div>
+                </div>
+            )}
 
             <SearchFilterBar
                 search={search}
@@ -155,10 +290,26 @@ const Inventory: React.FC<InventoryProps> = ({ garments, onNavigate, onDelete, o
                     onEdit={onEdit}
                     onDelete={onDelete}
                     onStockChange={handleQuickStock}
+                    selectedIds={selectedIds}
+                    onToggleSelect={handleToggleSelect}
+                    onToggleSelectAll={handleToggleSelectAll}
                 />
             ) : (
                 <EmptyState />
             )}
+
+            {/* Modals */}
+            <StockHistoryModal
+                isOpen={isHistoryOpen}
+                onClose={() => setIsHistoryOpen(false)}
+            />
+
+            <BulkDeleteModal
+                isOpen={isBulkDeleteOpen}
+                onClose={() => setIsBulkDeleteOpen(false)}
+                onConfirm={handleConfirmBulkDelete}
+                count={selectedIds.size}
+            />
         </div>
     );
 };

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import DeleteModal from './components/DeleteModal';
 import type { View, Garment } from './types';
-import { getAllGarments, addGarment, updateGarment, deleteGarment, importGarments } from './lib/database';
+import { getAllGarments, addGarment, updateGarment, deleteGarment, deleteGarments, importGarments } from './lib/database';
+import { recordStockMovement } from './lib/stockHistory';
 import './index.css';
 
 import Dashboard from './pages/Dashboard';
@@ -124,6 +125,18 @@ const App: React.FC = () => {
     try {
       const added = await addGarment(newGarment);
       setGarments(prev => [added, ...prev]);
+      recordStockMovement({
+        garmentId: added.id,
+        garmentName: added.name,
+        serialNumber: added.serialNumber,
+        brand: added.brand,
+        size: added.size,
+        color: added.color,
+        previousStock: 0,
+        newStock: added.currentStock,
+        change: added.currentStock,
+        type: 'initial'
+      });
       showToast('Article ajouté au stock', 'success');
     } catch (error) {
       console.error('Error adding garment:', error);
@@ -133,8 +146,26 @@ const App: React.FC = () => {
 
   const handleUpdate = async (updatedGarment: Garment) => {
     try {
+      const oldGarment = garments.find(g => g.id === updatedGarment.id);
       const updated = await updateGarment(updatedGarment);
       setGarments(prev => prev.map(g => g.id === updated.id ? updated : g));
+
+      if (oldGarment && oldGarment.currentStock !== updated.currentStock) {
+        const diff = updated.currentStock - oldGarment.currentStock;
+        recordStockMovement({
+          garmentId: updated.id,
+          garmentName: updated.name,
+          serialNumber: updated.serialNumber,
+          brand: updated.brand,
+          size: updated.size,
+          color: updated.color,
+          previousStock: oldGarment.currentStock,
+          newStock: updated.currentStock,
+          change: diff,
+          type: diff > 0 ? 'increase' : 'decrease'
+        });
+      }
+
       setEditingGarment(null);
       setCurrentView('inventory');
       showToast('Article mis à jour', 'success');
@@ -148,10 +179,38 @@ const App: React.FC = () => {
     try {
       const added = await importGarments(importedGarments);
       setGarments(prev => [...added, ...prev]);
+
+      // Record stock movements for imported batch
+      added.forEach(item => {
+        recordStockMovement({
+          garmentId: item.id,
+          garmentName: item.name,
+          serialNumber: item.serialNumber,
+          brand: item.brand,
+          size: item.size,
+          color: item.color,
+          previousStock: 0,
+          newStock: item.currentStock,
+          change: item.currentStock,
+          type: 'import'
+        });
+      });
+
       showToast(`${added.length} articles importés avec succès !`, 'success');
     } catch (error) {
       console.error('Error importing garments:', error);
       showToast("Erreur lors de l'importation", 'error');
+    }
+  };
+
+  const handleBulkDelete = async (ids: string[]) => {
+    try {
+      await deleteGarments(ids);
+      setGarments(prev => prev.filter(g => !ids.includes(g.id)));
+      showToast(`${ids.length} article(s) supprimé(s) avec succès`, 'success');
+    } catch (error) {
+      console.error('Error deleting batch garments:', error);
+      showToast('Erreur lors de la suppression groupée', 'error');
     }
   };
 
@@ -178,7 +237,7 @@ const App: React.FC = () => {
 
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard garments={garments} onNavigate={setCurrentView} />;
+        return <Dashboard garments={garments} onNavigate={setCurrentView} onUpdate={handleUpdate} />;
       case 'inventory':
         return (
           <Inventory
@@ -188,6 +247,7 @@ const App: React.FC = () => {
             onEdit={handleEdit}
             onImport={handleImport}
             onUpdate={handleUpdate}
+            onBulkDelete={handleBulkDelete}
           />
         );
       case 'add-garment':

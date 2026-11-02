@@ -54,6 +54,32 @@ CREATE POLICY "Enable delete access for all users" ON garments
   FOR DELETE USING (true);
 ```
 
+## 📜 Schéma optionnel de la table `stock_movements` (Historique)
+
+Pour synchroniser également les mouvements de stock dans Supabase :
+
+```sql
+CREATE TABLE stock_movements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  garment_id UUID REFERENCES garments(id) ON DELETE SET NULL,
+  garment_name TEXT NOT NULL,
+  serial_number TEXT NOT NULL,
+  brand TEXT NOT NULL,
+  size TEXT NOT NULL,
+  color TEXT NOT NULL,
+  previous_stock INTEGER NOT NULL,
+  new_stock INTEGER NOT NULL,
+  change INTEGER NOT NULL,
+  type TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE stock_movements ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all access on stock_movements" ON stock_movements
+  FOR ALL USING (true);
+```
+
 ## 🚀 Comment tester
 
 1. **Redémarrez le serveur de développement** :
